@@ -199,6 +199,31 @@
                 </div>
             </div>
 
+            <!-- 🎬 今日同步动画图解舞台 (视觉+声音直观理解今日核心概念) -->
+            <div id="daily-anim-box" class="bg-cyber-bg/95 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-cyber-purple/20 border border-cyber-purple/40 text-cyber-purple text-[11px] font-bold">🎬 今日原理动画</span>
+                        <span id="daily-anim-title" class="text-xs font-bold text-white">6 根弦与 E4-E2 音高秘密</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="daily-anim-step-badge" class="text-[11px] font-mono text-slate-400">第 1 / 4 步</span>
+                        <button id="daily-anim-play-btn" onclick="toggleDailyAnimation()" class="px-3 py-1 rounded-lg bg-cyber-purple text-white text-xs font-bold hover:opacity-90 transition-all">
+                            ▶ 播放动画讲解
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+                    <div id="daily-anim-svg-wrap" class="lg:col-span-7 bg-slate-950/80 border border-slate-800/80 rounded-xl p-2 flex items-center justify-center min-h-[126px]">
+                        <!-- JS 动态渲染今日教学 SVG 动画 -->
+                    </div>
+                    <div class="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-xl p-3 space-y-1.5 min-h-[126px] flex flex-col justify-center">
+                        <div id="daily-anim-caption-title" class="text-xs font-bold text-cyber-cyan">动画讲解</div>
+                        <p id="daily-anim-caption" class="text-[11px] text-slate-300 leading-relaxed">点击「▶ 播放动画讲解」，网页会一边动起来一边发出声音带你理解。</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- 为什么今天练这个 + 一键联动操作 -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
                 <p id="daily-why-text" class="text-xs text-slate-300 bg-cyber-bg/60 border border-slate-800/80 rounded-xl px-3 py-2 flex-1">
@@ -566,7 +591,7 @@ E|--0--|  (6弦最粗)</pre>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-400 gap-1 pt-1">
-                <span>💡 视角说明：最上方为<strong>第 1 弦（最细，高音 E）</strong>，最下方为<strong>第 6 弦（最粗，低音 E）</strong>——这与你低头看自己怀里吉他的六线谱（TAB）视角完全一致！</span>
+                <span>💡 视角说明：最上方为<strong>第 1 弦（最细，E4）</strong>，最下方为<strong>第 6 弦（最粗，E2）</strong>。<strong>字母=音名，数字 2/3/4=音高八度（数字越大越细越尖）</strong>！</span>
                 <span class="font-mono text-slate-500">支持键盘数字键 1-6 快速拨响空弦</span>
             </div>
         </section>
@@ -3282,6 +3307,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '电吉他指板为什么像游戏地图？', tag: '启蒙', desc: '在「模式 01」下分别点 6 弦 0品、3品、5品、7品、12品。观察品格越往右音越高，第 12 品刚好高八度，和空弦是同一个音名！' },
                 jam: { title: '初体验强力和弦轰鸣感', tag: '85 BPM', desc: '切到「模式 02」，点一下「▶ 赛博重型脉冲 Riff」，感受电吉他不需要复杂按法就能发出的摇滚能量。' },
                 why: '第一天先建立“吉他很酷且不难”的直觉与指板空间感，彻底告别五线谱恐惧。',
+                animType: 'strings_octave',
                 env: { mode: 'powerchord', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 85, labTab: 'riff', riffIdx: 0 }
             },
             {
@@ -3290,6 +3316,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '弄懂“每移动 1 品 = 1 个半音”', tag: '乐理', desc: '在 6 弦上从 0 品到 12 品一格一格往右点，对照键盘或音名表，记住只有 E-F 和 B-C 之间挨着（差 1 品），其余都隔 1 品。' },
                 jam: { title: 'Lv.1 单弦 Bassline 预习跟唱', tag: '90 BPM', desc: '打开「经典 Riff 闯关库」选 Lv.1（50% 速度），跟着亮起的格子用嘴哼出节奏：咚-咚-哒-咚-咚-哒-咚。' },
                 why: '所有电吉他转调、找音全靠“12 半音规则”；先在脑子里种下 4/4 拍鼓点，后面拿到真琴上手快一倍。',
+                animType: 'semitone_beat',
                 env: { mode: 'explore', tone: 'clean', scale: 'chromatic', bpm: 80, labTab: 'riff', riffIdx: 0 }
             },
             {
@@ -3298,6 +3325,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '模式 03 认音小测（只考 6 弦）', tag: '测验', desc: '切到「模式 03 音名识别测验」，专心认出 6 弦的 E(0)、F(1)、G(3)、A(5)、B(7)、C(8)、D(10)，连续答对 10 题！' },
                 jam: { title: '赛博朋克鼓+贝斯伴奏跟拍', tag: '95 BPM', desc: '打开「电子/摇滚伴奏」，选「赛博朋克合成低音」，边听伴奏边在 6 弦对应根音（E-G-A-B）上点击配合。' },
                 why: '6 弦是摇滚与金属的绝对地基！把 6 弦前 12 品认熟，你就能看懂一半以上的强力和弦位置。',
+                animType: 'string_map',
                 env: { mode: 'quiz', tone: 'overdrive', scale: 'natural_minor', bpm: 95, labTab: 'backing', backingIdx: 0 }
             },
             {
@@ -3306,6 +3334,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '5 弦音名 + 跨弦八度定位法', tag: '核心', desc: '记住 5 弦空弦是 A，3品=C、5品=D、7品=E。再看规律：6 弦任意一品，往下一根弦再往右两品，就是它的高八度！' },
                 jam: { title: 'Daft Punk 电子合成八度预习', tag: '100 BPM', desc: '顶部切到「🎛️ 电子合成」音色，打开 Riff 库 Lv.4（八度跳跃），体验电子乐最经典的贝斯跳跃律动。' },
                 why: '6 弦 + 5 弦两条路线打通，电吉他最常用的 80% 根音和强力和弦你都能瞬间找到。',
+                animType: 'octave_jump',
                 env: { mode: 'powerchord', tone: 'synth', scale: 'pentatonic_minor', bpm: 100, labTab: 'riff', riffIdx: 3 }
             },
             {
@@ -3314,6 +3343,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '为什么摇滚手只靠这一个手型打天下？', tag: '核心', desc: 'Power Chord 只有根音和五度音，没有大三/小三度，所以无论大调小调都能用、开失真也不浑浊。记住 E5/G5/A5/C5/D5 的位置。' },
                 jam: { title: '80年代硬摇滚伴奏实战', tag: '105 BPM', desc: '打开伴奏选「80年代硬摇滚 4/4」，用 75% 速度跟着伴奏切换点击 E5 → G5 → A5 → B5。' },
                 why: '这是电吉他手的第一把“瑞士军刀”，拿到真琴后一周内就能靠它弹出完整的摇滚节奏。',
+                animType: 'powerchord_shape',
                 env: { mode: 'powerchord', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 105, labTab: 'backing', backingIdx: 1 }
             },
             {
@@ -3322,6 +3352,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '锁定 5–8 品黄金盒型（Box 1）', tag: '核心', desc: '观察 5 品到 8 品之间每根弦上的两个圆点。记住“6弦5品是根音 A”，以后所有的摇滚 Solo 都从这个小方块出发！' },
                 jam: { title: '试听 Lv.7《灰色轨迹》致敬慢板', tag: '76 BPM', desc: '在 Riff 库打开 Lv.7，切「摇滚失真」音色，慢速 75% 听一听港摇抒情 Solo 的长音旋律感。' },
                 why: '提前熟悉 Am 五声音阶的位置与听感，为之后弹旋律和《灰色轨迹》慢板 Solo 打下听觉地基。',
+                animType: 'pentatonic_box',
                 env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 76, labTab: 'riff', riffIdx: 6 }
             },
             {
@@ -3330,6 +3361,7 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: '1500 元内二手挑琴 & 耳机静音方案核对', tag: '装备', desc: '重点看 Yamaha Pacifica 112V/012 或 Squier Affinity HSS（避开大双摇），配一个 NUX Mighty Plug Pro / 桌面小效果器即可深夜静音练琴。' },
                 jam: { title: '综合认音 + 节拍通关测试', tag: '90 BPM', desc: '在模式 03 连续答对 12 题（6弦+5弦），并用 AI 老师语音提问一次你最关心的买琴或手型问题！' },
                 why: '准备好装备与正确手型概念，拿到真琴的第一分钟就能直接调音开弹，不走弯路。',
+                animType: 'gear_posture',
                 env: { mode: 'quiz', tone: 'clean', scale: 'pentatonic_minor', bpm: 90, labTab: 'tuner', riffIdx: 0 }
             }
         ];
@@ -3390,6 +3422,7 @@ E|--0--|  (6弦最粗)</pre>
                     core: { title: t.title, tag: `${bpm} BPM`, desc: hasGuitar ? t.desc : `【预习模式】${t.desc}（暂未拿到琴可先在指板点亮对应品位配合鼓点打拍子）` },
                     jam: { title: '单音 Riff + 踩拍精准度挑战', tag: `${bpm} BPM`, desc: `开启真琴监听 + 电子鼓，争取在「音游踩拍」里连续打出 5 个以上 PERFECT！` },
                     why: 'Phase 1 的核心是“右手比左手更重要”——先把节拍和消音练干净，后面的和弦与 Solo 才不会糊。',
+                    animType: 'palm_mute',
                     env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm, labTab: t.labTab, riffIdx: t.riffIdx, backingIdx: 0 }
                 };
             }
@@ -3413,6 +3446,7 @@ E|--0--|  (6弦最粗)</pre>
                     core: { title: t.title, tag: '强力和弦', desc: t.desc },
                     jam: { title: '跟伴奏稳住 8 小节不掉拍', tag: `${bpm} BPM`, desc: `打开伴奏（可先开 75% 速度），把今天练的和弦推进连续弹完 2 轮不中断。` },
                     why: 'Phase 2 让你真正具备“能跟着完整鼓贝斯伴奏弹完整段摇滚/电子节奏”的能力。',
+                    animType: 'powerchord_shape',
                     env: { mode: t.mode, tone: t.tone, scale: 'pentatonic_minor', bpm, labTab: t.labTab, riffIdx: t.riffIdx, backingIdx: t.backingIdx }
                 };
             }
@@ -3436,6 +3470,7 @@ E|--0--|  (6弦最粗)</pre>
                     core: { title: t.title, tag: 'Solo 技巧', desc: t.desc },
                     jam: { title: 'Am 五声音阶自由即兴 5 分钟', tag: `${bpm} BPM`, desc: `打开「暗潮后朋克贝斯」或「80年代硬摇滚」伴奏，只在 5–8 品亮灯圆点里随便选 3 个音做问答式旋律！` },
                     why: '击勾弦、推弦、揉弦是电吉他 Solo 有“人声哭腔和张力”的四大核心技巧。',
+                    animType: 'bend_vibrato',
                     env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm, labTab: 'riff', riffIdx: t.riffIdx, backingIdx: t.backingIdx }
                 };
             }
@@ -3459,6 +3494,7 @@ E|--0--|  (6弦最粗)</pre>
                     core: { title: t.title, tag: speedHint, desc: t.desc },
                     jam: { title: '情绪渐强叙事练习', tag: '76-100 BPM', desc: '先用轻拨弦弹 4 小节抒情慢板，后 4 小节加大拨弦力度并切到失真高潮，练出旋律的动态起伏。' },
                     why: 'Phase 4 正式把你从“单音/和弦玩家”升级为能弹出有画面感旋律的摇滚乐手。',
+                    animType: 'solo_phrase',
                     env: { mode: 'explore', tone: t.tone, scale: 'pentatonic_minor', bpm: 84, labTab: 'riff', riffIdx: t.riffIdx, backingIdx: 1 }
                 };
             }
@@ -3479,8 +3515,240 @@ E|--0--|  (6弦最粗)</pre>
                 core: { title: t5.title, tag: '实战毕业', desc: t5.desc },
                 jam: { title: '个人专属 5 分钟 Jam Session', tag: '105 BPM', desc: '关掉六线谱提示，只留伴奏，完全凭感觉在指板上自由演奏 5 分钟，享受电吉他带来的松弛与快乐！' },
                 why: '走到 Phase 5，你已经跨过了电吉他最难的新手门槛，可以自由挑歌扒谱、组自己的电子摇滚小样了。',
+                animType: 'solo_phrase',
                 env: { mode: 'explore', tone: t5.tone, scale: 'pentatonic_minor', bpm: 105, labTab: t5.labTab, riffIdx: 6, backingIdx: t5.backingIdx }
             };
+        }
+
+        // ==========================================
+        // 15. 每日原理动画引擎 (SVG + WebAudio 同步演示)
+        // ==========================================
+        const DAILY_ANIM_DEFS = {
+            strings_octave: {
+                title: '什么是 E4 / B3 / G3 / D3 / A2 / E2？',
+                steps: [
+                    { capTitle: '1. 字母是音名，数字是“楼层高低”', caption: 'E、A、D、G、B、E 是 6 根弦的名字；后面的数字 2 / 3 / 4 代表音高在第几组（就像楼层：2楼低沉，4楼高亢）。', midi: 40, highlight: 5 },
+                    { capTitle: '2. 第 6 弦 E2（最粗、最低沉）', caption: '最下面的 6 弦最粗，发出的 E2 是摇滚和电子低音的厚重地基！', midi: 40, highlight: 5 },
+                    { capTitle: '3. 越往上越细：5A2 → 4D3 → 3G3 → 2B3', caption: '琴弦一根比一根细，音高也一层一层往“高楼层”爬升。', midi: 50, highlight: 3 },
+                    { capTitle: '4. 第 1 弦 E4（最细、最高音）', caption: '最上面的 1 弦 E4 和最下面的 6 弦 E2 同名，但高了整整两个八度，专门用来弹明亮的 Solo！', midi: 64, highlight: 0 }
+                ]
+            },
+            semitone_beat: {
+                title: '12 半音规律 & 4/4 拍脉冲动画',
+                steps: [
+                    { capTitle: '第 1 步：每往右移 1 品 = 升高 1 个半音', caption: '就像楼梯每次上一格：6 弦空弦 E → 1品 F（E和F之间没有黑键，紧挨着！）。', midi: 41, highlight: 0 },
+                    { capTitle: '第 2 步：大多数音中间隔 1 品', caption: 'F(1品) 跳过 2品(F#) 到 3品 G，再跳过 4品 到 5品 A——只有 E-F 和 B-C 紧挨着！', midi: 43, highlight: 1 },
+                    { capTitle: '第 3 步：第 12 品 = 回到起点高八度', caption: '数满 12 格后回到 E3，所以指板第 12 品上有两个圆点做标记。', midi: 52, highlight: 2 },
+                    { capTitle: '第 4 步：4/4 拍“强-弱-次强-弱”', caption: '电子鼓每 4 拍一循环：1 拍踩脚重音（咚），2-3-4 拍稳稳接上（哒-咚-哒）。', midi: 45, highlight: 3 }
+                ]
+            },
+            string_map: {
+                title: '6 弦音名地图（跟着品记圆点记）',
+                steps: [
+                    { capTitle: '空弦 0 品 = E（标准低音起点）', caption: '不按弦直接拨 6 弦，永远是 E，不用背就会。', midi: 40, highlight: 0 },
+                    { capTitle: '3 品（第 1 个圆点）= G', caption: '看到指板上第 1 个白点就是 3 品 G，摇滚最常用的低音之一。', midi: 43, highlight: 1 },
+                    { capTitle: '5 品（第 2 个圆点）= A', caption: '第 2 个白点是 5 品 A，它和下一根 5 弦空弦(A2)是完全相同的音！', midi: 45, highlight: 2 },
+                    { capTitle: '7 品（第 3 个圆点）= B', caption: '第 3 个白点是 7 品 B。记住 0(E)-3(G)-5(A)-7(B)，6 弦地图就通了！', midi: 47, highlight: 3 }
+                ]
+            },
+            octave_jump: {
+                title: '跨弦八度定位法（一秒找同名高音）',
+                steps: [
+                    { capTitle: '1. 先在 6 弦按一个起点（如 5 品 A）', caption: '假设左手食指按住 6 弦 5 品（低音 A）。', midi: 45, highlight: 0 },
+                    { capTitle: '2. 向下跨 2 根弦、往右移 2 品', caption: '顺着斜对角线看：跳到 4 弦 7 品，不用算音名，它一定也是 A（高八度）！', midi: 57, highlight: 1 },
+                    { capTitle: '3. 电子乐最爱的八度跳跃律动', caption: '食指和无名指固定这个“跨两弦隔两品”手型，交替拨响就是 Daft Punk 经典电音贝斯味！', midi: 45, highlight: 2 },
+                    { capTitle: '4. 整手平移任意换调', caption: '整个斜对角手型往左或往右平移到任意品位，八度关系永远不变！', midi: 59, highlight: 3 }
+                ]
+            },
+            powerchord_shape: {
+                title: '强力和弦（Power Chord）移动几何块',
+                steps: [
+                    { capTitle: '1. 只需要两根手指的“L 形积木”', caption: '食指按 6 弦根音（如 3 品 G），无名指按下一根 5 弦往右 2 品（5 品 D）。', midi: 43, highlight: 0 },
+                    { capTitle: '2. 为什么叫强力和弦？', caption: '根音 + 五度音同时响，开摇滚失真极其厚实、完全不浑浊！', midi: 50, highlight: 1 },
+                    { capTitle: '3. 平移到 5 品就是 A5，7 品就是 B5', caption: '手型死死固定不用变，整只手沿着琴颈左右滑动就能弹遍所有摇滚伴奏！', midi: 45, highlight: 2 },
+                    { capTitle: '4. 食指指腹顺便做“废弦消音”', caption: '按好 6 弦和 5 弦后，食指指腹轻轻虚搭在下面细弦上，猛扫也不会出杂音。', midi: 47, highlight: 3 }
+                ]
+            },
+            pentatonic_box: {
+                title: 'Am 五声音阶 5–8 品黄金盒型',
+                steps: [
+                    { capTitle: '1. 食指当“守门员”守住 5 品', caption: '左手食指负责所有 5 品的音，无名指负责 7 品，小指负责 8 品。', midi: 45, highlight: 0 },
+                    { capTitle: '2. 6弦(5-8) → 5弦(5-7) → 4弦(5-7)', caption: '低音三根弦从左到右按小方块走一遍，浑厚稳重。', midi: 52, highlight: 1 },
+                    { capTitle: '3. 3弦(5-7) → 2弦(5-8) → 1弦(5-8)', caption: '高音三根弦亮起来了！这里就是所有摇滚 Solo 的主战场。', midi: 60, highlight: 2 },
+                    { capTitle: '4. 随便选这 5 个音组合都不会难听', caption: '五声音阶去掉了最容易跑调的半音，怎么弹都自带摇滚旋律感！', midi: 64, highlight: 3 }
+                ]
+            },
+            gear_posture: {
+                title: '真琴上手三大黄金手型（动画自检）',
+                steps: [
+                    { capTitle: '1. 左手指尖立起、贴近右侧金属品丝', caption: '不要按在格子正中间！越靠近右侧品丝越省力、越不容易发出滋滋打品声。', midi: 57, highlight: 0 },
+                    { capTitle: '2. 拨片只露 3mm、呈 45° 斜切琴弦', caption: '露太多会卡弦，平着拍弦会生硬；斜着 45° 滑过琴弦才流畅。', midi: 52, highlight: 1 },
+                    { capTitle: '3. 右手掌小鱼际轻贴琴桥做闷音', caption: '贴住时是厚重的“咚咚”颗粒感，抬起时是炸裂的开放长音。', midi: 40, highlight: 2 },
+                    { capTitle: '4. 手腕自然放松，不耸肩、不憋气', caption: '每次练琴感觉手酸就立刻停下抖手 10 秒，肌肉记忆靠的是每天 20 分钟积累。', midi: 64, highlight: 3 }
+                ]
+            },
+            palm_mute: {
+                title: '右手闷音（Palm Mute）与滑音动画',
+                steps: [
+                    { capTitle: '1. 开放音（手掌抬起）：轰鸣延音', caption: '右手掌离开琴弦，拨响 E5 或 6 弦空弦，声音自由震荡传播。', midi: 40, highlight: 0 },
+                    { capTitle: '2. 闷音（小鱼际轻搭琴桥）：紧凑颗粒', caption: '手掌外侧轻轻靠在琴桥金属座前沿，声音立刻变成短促有力的“Chug-Chug”声！', midi: 40, highlight: 1 },
+                    { capTitle: '3. 强弱对比：重音 + 闷音 + 闷音', caption: '摇滚最帅的律动公式就是“1 拍重扫放开 + 2、3 拍手掌贴住闷音推进”。', midi: 45, highlight: 2 },
+                    { capTitle: '4. 滑音（Slide）：按紧不松手滑过去', caption: '拨响 5 品后手指保持压力滑到 7 品，两个音之间就会连成丝滑过渡。', midi: 57, highlight: 3 }
+                ]
+            },
+            bend_vibrato: {
+                title: 'Solo 灵魂：全音推弦 + 揉弦波形动画',
+                steps: [
+                    { capTitle: '1. 为什么推弦需要“三指合力”？', caption: '用无名指按 3 弦 7 品时，把食指和中指也搭在后面一起往上推，手腕旋转发力！', midi: 62, highlight: 0 },
+                    { capTitle: '2. 全音推弦目标：7 品推出 9 品的音高', caption: '推弦不是瞎推，耳朵要听着音高正好爬升到高两品（9 品）的位置停住。', midi: 64, highlight: 1 },
+                    { capTitle: '3. 揉弦（Vibrato）：让长音像人声一样颤动', caption: '手腕像拧门把手一样匀速微幅上下摇晃，音符立刻有了情绪和呼吸感。', midi: 64, highlight: 2 },
+                    { capTitle: '4. 击弦/勾弦：左手自己发声', caption: '击弦像小锤子垂直砸下品格；勾弦像手指微微往下勾拨琴弦。', midi: 60, highlight: 3 }
+                ]
+            },
+            solo_phrase: {
+                title: '《灰色轨迹》式抒情 Solo 叙事曲线',
+                steps: [
+                    { capTitle: '1. 起句留白：慢板长音入戏', caption: '先在 3 弦 5→7 品、2 弦 8 品用长音和轻揉弦铺垫，像开口说话一样不急不躁。', midi: 60, highlight: 0 },
+                    { capTitle: '2. 情绪抬升：高把位全音推弦哭腔', caption: '切到 1 弦或 2 弦高音区，用扎实的推弦把情绪推向高潮。', midi: 69, highlight: 1 },
+                    { capTitle: '3. 承接回落：五声音阶下行收尾', caption: '从 1 弦 8 品 → 5 品 → 2 弦 8 品 → 3 弦 7 品稳稳落回主调安全音上。', midi: 62, highlight: 2 },
+                    { capTitle: '4. 呼吸感：每句结束记得消音与停顿', caption: '好的 Solo 留白和音符一样重要，敢于停顿 1 拍反而更显高级！', midi: 57, highlight: 3 }
+                ]
+            }
+        };
+
+        let dailyAnimTimer = null;
+        let dailyAnimStep = 0;
+
+        function buildDailyAnimSvg(animType, stepIdx) {
+            if (animType === 'strings_octave') {
+                const strs = [
+                    { n: '1弦', label: 'E4 (最细)', y: 18, w: 1.5, c: '#00f0ff' },
+                    { n: '2弦', label: 'B3', y: 34, w: 2.0, c: '#38bdf8' },
+                    { n: '3弦', label: 'G3', y: 50, w: 2.5, c: '#818cf8' },
+                    { n: '4弦', label: 'D3', y: 66, w: 3.0, c: '#a855f7' },
+                    { n: '5弦', label: 'A2', y: 82, w: 3.5, c: '#ec4899' },
+                    { n: '6弦', label: 'E2 (最粗)', y: 98, w: 4.5, c: '#ff2a85' }
+                ];
+                const activeMap = [ [0,1,2,3,4,5], [5], [4,3,2,1], [0] ];
+                const actives = activeMap[stepIdx % 4];
+                return `<svg viewBox="0 0 380 116" class="w-full max-w-[380px] h-[112px]">
+                    <rect x="64" y="8" width="290" height="100" rx="8" fill="#0f172a" stroke="#334155"/>
+                    ${[130, 195, 260, 320].map(x => `<line x1="${x}" y1="8" x2="${x}" y2="108" stroke="#475569" stroke-width="2"/>`).join('')}
+                    ${strs.map((s, i) => {
+                        const on = actives.includes(i);
+                        return `
+                            <text x="8" y="${s.y + 4}" fill="${on ? s.c : '#64748b'}" font-size="10" font-weight="bold" font-family="monospace">${s.n} ${s.label}</text>
+                            <line x1="68" y1="${s.y}" x2="350" y2="${s.y}" stroke="${on ? s.c : '#475569'}" stroke-width="${on ? s.w + 1.5 : s.w}"/>
+                            ${on ? `<circle cx="96" cy="${s.y}" r="6" fill="${s.c}" class="animate-pulse"/>` : ''}
+                        `;
+                    }).join('')}
+                </svg>`;
+            }
+            if (animType === 'semitone_beat') {
+                const notes = ['E(0)', 'F(1)', 'F#', 'G(3)', 'G#', 'A(5)', 'A#', 'B(7)', 'C(8)', 'C#', 'D(10)', 'D#', 'E(12)'];
+                const hi = [1, 3, 12, 5][stepIdx % 4];
+                return `<svg viewBox="0 0 380 116" class="w-full max-w-[380px] h-[112px]">
+                    <rect x="8" y="16" width="364" height="44" rx="6" fill="#0f172a" stroke="#334155"/>
+                    ${notes.map((nt, i) => {
+                        const x = 12 + i * 27.5;
+                        const on = (i === hi || (stepIdx === 0 && i <= 1));
+                        return `
+                            <rect x="${x}" y="20" width="25" height="36" rx="4" fill="${on ? '#00f0ff' : '#1e293b'}" fill-opacity="${on ? '0.28' : '1'}" stroke="${on ? '#00f0ff' : '#334155'}"/>
+                            <text x="${x + 12.5}" y="42" text-anchor="middle" fill="${on ? '#00f0ff' : '#94a3b8'}" font-size="8" font-family="monospace">${nt}</text>
+                        `;
+                    }).join('')}
+                    ${[0,1,2,3].map(b => {
+                        const bx = 95 + b * 62;
+                        const on = (stepIdx === 3 && b === 0) || (b === stepIdx);
+                        return `
+                            <circle cx="${bx}" cy="88" r="${on ? 12 : 8}" fill="${on ? (b === 0 ? '#ff2a85' : '#00f0ff') : '#1e293b'}" stroke="#475569"/>
+                            <text x="${bx}" y="92" text-anchor="middle" fill="${on ? '#000' : '#94a3b8'}" font-size="9" font-weight="bold">${b + 1}拍</text>
+                        `;
+                    }).join('')}
+                </svg>`;
+            }
+            if (animType === 'powerchord_shape' || animType === 'octave_jump') {
+                const fretOffsets = [0, 3, 5, 7];
+                const f = fretOffsets[stepIdx % 4];
+                const baseX = 50 + f * 28;
+                return `<svg viewBox="0 0 380 116" class="w-full max-w-[380px] h-[112px]">
+                    <rect x="20" y="12" width="340" height="92" rx="8" fill="#0f172a" stroke="#334155"/>
+                    ${[0,1,2,3,4,5,6,7,8].map(i => `<line x1="${40 + i*35}" y1="12" x2="${40 + i*35}" y2="104" stroke="#334155" stroke-width="1.5"/>`).join('')}
+                    ${[26,42,58,74,90].map(y => `<line x1="20" y1="${y}" x2="360" y2="${y}" stroke="#475569" stroke-width="2"/>`).join('')}
+                    <line x1="${baseX}" y1="90" x2="${baseX + 56}" y2="${animType === 'octave_jump' ? 58 : 74}" stroke="#a855f7" stroke-width="3" stroke-dasharray="4 3"/>
+                    <circle cx="${baseX}" cy="90" r="10" fill="#ff2a85" class="animate-pulse"/>
+                    <text x="${baseX}" y="94" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">根</text>
+                    <circle cx="${baseX + 56}" cy="${animType === 'octave_jump' ? 58 : 74}" r="10" fill="#00f0ff" class="animate-pulse"/>
+                    <text x="${baseX + 56}" y="${animType === 'octave_jump' ? 62 : 78}" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">${animType === 'octave_jump' ? '8度' : '5度'}</text>
+                </svg>`;
+            }
+            if (animType === 'palm_mute' || animType === 'bend_vibrato' || animType === 'solo_phrase') {
+                const wavePts = stepIdx === 1
+                    ? 'M20 72 Q90 24 160 44 T350 40'
+                    : (stepIdx === 2 ? 'M20 58 Q45 38 70 58 T120 58 T170 58 T220 58 T270 58 T340 58' : 'M20 65 Q110 65 180 35 T350 55');
+                return `<svg viewBox="0 0 380 116" class="w-full max-w-[380px] h-[112px]">
+                    <rect x="10" y="10" width="360" height="96" rx="8" fill="#0f172a" stroke="#334155"/>
+                    <line x1="20" y1="60" x2="360" y2="60" stroke="#334155" stroke-dasharray="4 4"/>
+                    <path d="${wavePts}" fill="none" stroke="${stepIdx === 1 ? '#ff2a85' : '#00f0ff'}" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="${70 + stepIdx * 75}" cy="50" r="9" fill="#f59e0b" class="animate-ping"/>
+                    <circle cx="${70 + stepIdx * 75}" cy="50" r="6" fill="#f59e0b"/>
+                    <text x="190" y="96" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="monospace">音高 / 震动波形动态示意 (第 ${stepIdx + 1} 阶段)</text>
+                </svg>`;
+            }
+            // 默认指板盒型/地图动画 (string_map, pentatonic_box, gear_posture)
+            const dots = [
+                { x: 75, y: 90 }, { x: 155, y: 74 }, { x: 235, y: 58 }, { x: 305, y: 26 }
+            ];
+            return `<svg viewBox="0 0 380 116" class="w-full max-w-[380px] h-[112px]">
+                <rect x="20" y="12" width="340" height="92" rx="8" fill="#0f172a" stroke="#334155"/>
+                ${[0,1,2,3,4,5,6].map(i => `<line x1="${50 + i*50}" y1="12" x2="${50 + i*50}" y2="104" stroke="#334155" stroke-width="1.5"/>`).join('')}
+                ${[26,42,58,74,90].map(y => `<line x1="20" y1="${y}" x2="360" y2="${y}" stroke="#475569" stroke-width="2"/>`).join('')}
+                ${dots.map((d, i) => `
+                    <circle cx="${d.x}" cy="${d.y}" r="${i === stepIdx ? 11 : 7}" fill="${i === stepIdx ? '#00f0ff' : '#334155'}" stroke="${i === stepIdx ? '#fff' : '#64748b'}" stroke-width="2"/>
+                `).join('')}
+            </svg>`;
+        }
+
+        function renderDailyAnimationFrame(playSound = false) {
+            const prog = loadDailyProgress();
+            const plan = getDailyCurriculum(prog.viewingDay, prog.hasGuitar);
+            const animType = plan.animType || 'strings_octave';
+            const def = DAILY_ANIM_DEFS[animType] || DAILY_ANIM_DEFS.strings_octave;
+            const step = def.steps[dailyAnimStep % def.steps.length];
+
+            document.getElementById('daily-anim-title').textContent = def.title;
+            document.getElementById('daily-anim-step-badge').textContent = `第 ${(dailyAnimStep % def.steps.length) + 1} / ${def.steps.length} 步`;
+            document.getElementById('daily-anim-caption-title').textContent = step.capTitle;
+            document.getElementById('daily-anim-caption').textContent = step.caption;
+            document.getElementById('daily-anim-svg-wrap').innerHTML = buildDailyAnimSvg(animType, dailyAnimStep % def.steps.length);
+
+            if (playSound && step.midi) {
+                playGuitarNote(step.midi, 0.85, 0);
+            }
+        }
+
+        function stopDailyAnimation() {
+            if (dailyAnimTimer) {
+                clearInterval(dailyAnimTimer);
+                dailyAnimTimer = null;
+            }
+            const btn = document.getElementById('daily-anim-play-btn');
+            if (btn) btn.textContent = '▶ 播放动画讲解';
+        }
+
+        function toggleDailyAnimation() {
+            const btn = document.getElementById('daily-anim-play-btn');
+            if (dailyAnimTimer) {
+                stopDailyAnimation();
+                return;
+            }
+            btn.textContent = '⏹ 停止动画';
+            dailyAnimStep = 0;
+            renderDailyAnimationFrame(true);
+            dailyAnimTimer = setInterval(() => {
+                dailyAnimStep = (dailyAnimStep + 1) % 4;
+                renderDailyAnimationFrame(true);
+            }, 2400);
         }
 
         function renderDailyMission() {
@@ -3541,6 +3809,10 @@ E|--0--|  (6弦最粗)</pre>
             } else {
                 completeBtn.textContent = `✅ 今日打卡通关 (解锁 Day ${Math.min(180, day + 1)})`;
             }
+
+            stopDailyAnimation();
+            dailyAnimStep = 0;
+            renderDailyAnimationFrame(false);
         }
 
         function toggleGearStatus() {
