@@ -140,6 +140,84 @@
     <!-- 主工作区 -->
     <main class="max-w-7xl w-full mx-auto px-4 py-6 space-y-5 flex-grow">
 
+        <!-- 📅 每日必练任务引擎 (Day 1 - 180 打卡通关制) -->
+        <section id="daily-mission-section" class="bg-gradient-to-br from-cyber-card via-slate-900 to-cyber-card border-2 border-cyber-cyan/50 rounded-2xl p-4 md:p-5 shadow-2xl space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <span id="daily-day-badge" class="px-3 py-1 rounded-xl bg-cyber-cyan text-slate-950 text-xs font-extrabold font-mono">DAY 1 / 180</span>
+                    <span id="daily-phase-badge" class="px-2.5 py-1 rounded-xl bg-cyber-purple/20 border border-cyber-purple/50 text-cyber-purple text-xs font-bold">Phase 0 · 网页预习与启蒙</span>
+                    <span id="daily-streak-badge" class="px-2.5 py-1 rounded-xl bg-cyber-amber/15 border border-cyber-amber/40 text-cyber-amber text-xs font-mono font-bold">🔥 连续打卡 0 天</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <button id="daily-gear-btn" onclick="toggleGearStatus()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-semibold transition-all" title="拿到电吉他后点此切换为真琴实操模式">
+                        🎧 当前：网页预习期（点此切换已买琴）
+                    </button>
+                    <div class="flex items-center gap-1 bg-cyber-bg border border-slate-800 rounded-xl p-1">
+                        <button onclick="previewAdjacentDay(-1)" class="px-2 py-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white" title="查看上一天">◀</button>
+                        <select id="daily-day-select" onchange="jumpToDay(this.value)" class="bg-transparent text-xs font-mono text-cyber-cyan px-1 focus:outline-none cursor-pointer"></select>
+                        <button onclick="previewAdjacentDay(1)" class="px-2 py-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white" title="查看下一天">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 总体进度条 -->
+            <div class="space-y-1">
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span id="daily-title-text" class="text-sm md:text-base font-extrabold text-white">Day 1：认识 6 根弦与 0-12 品视听规律</span>
+                    <span id="daily-progress-text" class="font-mono">已完成 0 / 180 天 (0%)</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                    <div id="daily-progress-bar" class="h-full bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- 今日 3 段式最佳实践任务卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-emerald-400">① 5 分钟 · 热身激活</span>
+                        <span id="daily-warmup-tag" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono">激活</span>
+                    </div>
+                    <div id="daily-warmup-title" class="font-bold text-white text-xs">听音与指板视野唤醒</div>
+                    <p id="daily-warmup-desc" class="text-[11px] text-slate-300 leading-relaxed">...</p>
+                </div>
+                <div class="bg-cyber-bg/90 border border-cyber-cyan/40 rounded-xl p-3.5 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-cyber-cyan">② 10 分钟 · 核心主线</span>
+                        <span id="daily-core-tag" class="text-[10px] px-2 py-0.5 rounded bg-cyber-cyan/15 text-cyber-cyan font-mono">主线</span>
+                    </div>
+                    <div id="daily-core-title" class="font-bold text-white text-xs">...</div>
+                    <p id="daily-core-desc" class="text-[11px] text-slate-300 leading-relaxed">...</p>
+                </div>
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-cyber-pink">③ 5 分钟 · 伴奏爽弹</span>
+                        <span id="daily-jam-tag" class="text-[10px] px-2 py-0.5 rounded bg-cyber-pink/15 text-cyber-pink font-mono">80 BPM</span>
+                    </div>
+                    <div id="daily-jam-title" class="font-bold text-white text-xs">...</div>
+                    <p id="daily-jam-desc" class="text-[11px] text-slate-300 leading-relaxed">...</p>
+                </div>
+            </div>
+
+            <!-- 为什么今天练这个 + 一键联动操作 -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
+                <p id="daily-why-text" class="text-xs text-slate-300 bg-cyber-bg/60 border border-slate-800/80 rounded-xl px-3 py-2 flex-1">
+                    💡 今日意义：...
+                </p>
+                <div class="flex flex-wrap items-center gap-2 shrink-0">
+                    <button onclick="launchDailyEnvironment()" class="px-3.5 py-2 rounded-xl bg-cyber-cyan text-slate-950 font-extrabold text-xs hover:opacity-90 transition-all shadow-lg shadow-cyber-cyan/20">
+                        ⚡ 一键配置今日练习环境
+                    </button>
+                    <button onclick="askAiForDailyLesson()" class="px-3.5 py-2 rounded-xl bg-cyber-purple/25 hover:bg-cyber-purple/35 border border-cyber-purple/60 text-white font-bold text-xs transition-all">
+                        🤖 AI 老师按今日任务带练
+                    </button>
+                    <button id="daily-complete-btn" onclick="completeDailyMission()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyber-cyan text-slate-950 font-extrabold text-xs hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">
+                        ✅ 今日打卡通关 (解锁下一天)
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- 新手 30 秒使用指南（可折叠） -->
         <section id="beginner-guide" class="bg-gradient-to-r from-cyber-card via-slate-900 to-cyber-card border border-cyber-amber/40 rounded-2xl p-4 shadow-lg">
             <div class="flex items-start justify-between gap-4 mb-2.5">
@@ -654,6 +732,7 @@ E|--0--|  (6弦最粗)</pre>
                             <option value="3">Lv.4 Daft 电子合成八度跳跃 (Octave)</option>
                             <option value="4">Lv.5 Am 五声音阶摇滚主音句 (Solo入门)</option>
                             <option value="5">Lv.6 工业摇滚 Drop-Feel 重型 Riff</option>
+                            <option value="6">Lv.7 港摇抒情风 Am 五声音阶慢板 (《灰色轨迹》致敬)</option>
                         </select>
                         <button id="riff-play-btn" onclick="toggleRiffPlayer()" class="px-4 py-1.5 rounded-xl bg-cyber-cyan text-black font-bold text-xs hover:opacity-90">▶ 播放跟弹</button>
                         <div class="flex items-center gap-1 bg-cyber-bg border border-slate-700 rounded-xl p-0.5 text-[11px]">
@@ -3041,6 +3120,21 @@ E|--0--|  (6弦最粗)</pre>
                     { label: '6弦3品', notes: [{ s: 5, f: 3 }] },
                     { label: '6弦0品', notes: [{ s: 5, f: 0 }] }
                 ]
+            },
+            {
+                name: 'Lv.7 港摇抒情风 Am 五声音阶慢板 (《灰色轨迹》致敬)',
+                bpm: 76,
+                tip: '💡 试着用「摇滚失真」音色！重点练长音延音、3弦7品滑到9品，以及高音1弦的抒情颗粒感。',
+                steps: [
+                    { label: '3弦5品', notes: [{ s: 2, f: 5 }] },
+                    { label: '3弦7品', notes: [{ s: 2, f: 7 }] },
+                    { label: '2弦5品', notes: [{ s: 1, f: 5 }] },
+                    { label: '2弦8品(长)', notes: [{ s: 1, f: 8 }] },
+                    { label: '1弦5品', notes: [{ s: 0, f: 5 }] },
+                    { label: '1弦8品(推弦感)', notes: [{ s: 0, f: 8 }] },
+                    { label: '2弦8品', notes: [{ s: 1, f: 8 }] },
+                    { label: '3弦7品(收尾)', notes: [{ s: 2, f: 7 }] }
+                ]
             }
         ];
         let riffIdx = 0;
@@ -3154,6 +3248,396 @@ E|--0--|  (6弦最粗)</pre>
             riffTimer = setInterval(tick, stepMs);
         }
 
+        // ==========================================
+        // 14. 180 天最佳实践每日任务引擎 (打卡通关制)
+        // ==========================================
+        const DAILY_PROGRESS_KEY = 'cyberfret_daily_progress_v1';
+
+        function loadDailyProgress() {
+            try {
+                const raw = localStorage.getItem(DAILY_PROGRESS_KEY);
+                if (raw) {
+                    const p = JSON.parse(raw);
+                    return {
+                        currentDay: Math.min(180, Math.max(1, p.currentDay || 1)),
+                        viewingDay: Math.min(180, Math.max(1, p.viewingDay || p.currentDay || 1)),
+                        hasGuitar: Boolean(p.hasGuitar),
+                        completedDays: Array.isArray(p.completedDays) ? p.completedDays : [],
+                        streak: p.streak || 0,
+                        lastCheckinDate: p.lastCheckinDate || ''
+                    };
+                }
+            } catch (e) {}
+            return { currentDay: 1, viewingDay: 1, hasGuitar: false, completedDays: [], streak: 0, lastCheckinDate: '' };
+        }
+
+        function saveDailyProgress(p) {
+            localStorage.setItem(DAILY_PROGRESS_KEY, JSON.stringify(p));
+        }
+
+        const PHASE0_DAYS = [
+            {
+                title: '认识 6 根弦与 0-12 品视听规律',
+                warmup: { title: '点亮指板听音唤醒', tag: '听感', desc: '先点顶部「🔊 试音」，再从 6 弦（最粗）到 1 弦（最细）依次点响空弦，记住“屏幕最上面是1弦最细、最下面是6弦最粗”。' },
+                core: { title: '电吉他指板为什么像游戏地图？', tag: '启蒙', desc: '在「模式 01」下分别点 6 弦 0品、3品、5品、7品、12品。观察品格越往右音越高，第 12 品刚好高八度，和空弦是同一个音名！' },
+                jam: { title: '初体验强力和弦轰鸣感', tag: '85 BPM', desc: '切到「模式 02」，点一下「▶ 赛博重型脉冲 Riff」，感受电吉他不需要复杂按法就能发出的摇滚能量。' },
+                why: '第一天先建立“吉他很酷且不难”的直觉与指板空间感，彻底告别五线谱恐惧。',
+                env: { mode: 'powerchord', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 85, labTab: 'riff', riffIdx: 0 }
+            },
+            {
+                title: '12 半音规则与 4/4 拍电子鼓踩拍',
+                warmup: { title: '电子鼓 4/4 拍点头训练', tag: '节奏', desc: '打开独立电子鼓机（80 BPM），盯着 4 个节拍脉冲灯，每亮第 1 颗红灯时用脚轻踩一下地面，建立稳固内拍。' },
+                core: { title: '弄懂“每移动 1 品 = 1 个半音”', tag: '乐理', desc: '在 6 弦上从 0 品到 12 品一格一格往右点，对照键盘或音名表，记住只有 E-F 和 B-C 之间挨着（差 1 品），其余都隔 1 品。' },
+                jam: { title: 'Lv.1 单弦 Bassline 预习跟唱', tag: '90 BPM', desc: '打开「经典 Riff 闯关库」选 Lv.1（50% 速度），跟着亮起的格子用嘴哼出节奏：咚-咚-哒-咚-咚-哒-咚。' },
+                why: '所有电吉他转调、找音全靠“12 半音规则”；先在脑子里种下 4/4 拍鼓点，后面拿到真琴上手快一倍。',
+                env: { mode: 'explore', tone: 'clean', scale: 'chromatic', bpm: 80, labTab: 'riff', riffIdx: 0 }
+            },
+            {
+                title: '攻克 6 弦（最粗弦）前 12 品音名地图',
+                warmup: { title: '6 弦空弦与 3/5/7 品听辨', tag: '听音', desc: '在指板 6 弦上依次点响 0品(E)、3品(G)、5品(A)、7品(B)，闭上眼睛再点一遍，用耳朵记住低音弦的厚重音高差。' },
+                core: { title: '模式 03 认音小测（只考 6 弦）', tag: '测验', desc: '切到「模式 03 音名识别测验」，专心认出 6 弦的 E(0)、F(1)、G(3)、A(5)、B(7)、C(8)、D(10)，连续答对 10 题！' },
+                jam: { title: '赛博朋克鼓+贝斯伴奏跟拍', tag: '95 BPM', desc: '打开「电子/摇滚伴奏」，选「赛博朋克合成低音」，边听伴奏边在 6 弦对应根音（E-G-A-B）上点击配合。' },
+                why: '6 弦是摇滚与金属的绝对地基！把 6 弦前 12 品认熟，你就能看懂一半以上的强力和弦位置。',
+                env: { mode: 'quiz', tone: 'overdrive', scale: 'natural_minor', bpm: 95, labTab: 'backing', backingIdx: 0 }
+            },
+            {
+                title: '攻克 5 弦音名地图与“八度口诀”',
+                warmup: { title: '3 分钟复习 6 弦核心品位', tag: '复习', desc: '打开模式 03 先快速连对 5 个 6 弦音名，热身大脑对指板品记（3/5/7/9/12）的视觉定位。' },
+                core: { title: '5 弦音名 + 跨弦八度定位法', tag: '核心', desc: '记住 5 弦空弦是 A，3品=C、5品=D、7品=E。再看规律：6 弦任意一品，往下一根弦再往右两品，就是它的高八度！' },
+                jam: { title: 'Daft Punk 电子合成八度预习', tag: '100 BPM', desc: '顶部切到「🎛️ 电子合成」音色，打开 Riff 库 Lv.4（八度跳跃），体验电子乐最经典的贝斯跳跃律动。' },
+                why: '6 弦 + 5 弦两条路线打通，电吉他最常用的 80% 根音和强力和弦你都能瞬间找到。',
+                env: { mode: 'powerchord', tone: 'synth', scale: 'pentatonic_minor', bpm: 100, labTab: 'riff', riffIdx: 3 }
+            },
+            {
+                title: '强力和弦（Power Chord）的本质与应用',
+                warmup: { title: '识别根音 + 5度音形状', tag: '形状', desc: '在「模式 02」下依次点击 6 弦 0品(E5)、3品(G5)、5品(A5)，观察紫色 5度音永远在“下一根弦往右 2 品”的固定几何形状！' },
+                core: { title: '为什么摇滚手只靠这一个手型打天下？', tag: '核心', desc: 'Power Chord 只有根音和五度音，没有大三/小三度，所以无论大调小调都能用、开失真也不浑浊。记住 E5/G5/A5/C5/D5 的位置。' },
+                jam: { title: '80年代硬摇滚伴奏实战', tag: '105 BPM', desc: '打开伴奏选「80年代硬摇滚 4/4」，用 75% 速度跟着伴奏切换点击 E5 → G5 → A5 → B5。' },
+                why: '这是电吉他手的第一把“瑞士军刀”，拿到真琴后一周内就能靠它弹出完整的摇滚节奏。',
+                env: { mode: 'powerchord', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 105, labTab: 'backing', backingIdx: 1 }
+            },
+            {
+                title: 'Am 五声音阶——摇滚与《灰色轨迹》的灵魂',
+                warmup: { title: '按顺序听一遍 Am 五声音阶', tag: '音阶', desc: '切到「模式 01」选「Am 五声音阶」，点击「▶ 顺滑演示一遍音阶」，记住它自带悲壮与摇滚感的 5 个音（A-C-D-E-G）。' },
+                core: { title: '锁定 5–8 品黄金盒型（Box 1）', tag: '核心', desc: '观察 5 品到 8 品之间每根弦上的两个圆点。记住“6弦5品是根音 A”，以后所有的摇滚 Solo 都从这个小方块出发！' },
+                jam: { title: '试听 Lv.7《灰色轨迹》致敬慢板', tag: '76 BPM', desc: '在 Riff 库打开 Lv.7，切「摇滚失真」音色，慢速 75% 听一听港摇抒情 Solo 的长音旋律感。' },
+                why: '提前熟悉 Am 五声音阶的位置与听感，为之后弹旋律和《灰色轨迹》慢板 Solo 打下听觉地基。',
+                env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm: 76, labTab: 'riff', riffIdx: 6 }
+            },
+            {
+                title: '买琴/验琴准备 + 阶段预习综合通关',
+                warmup: { title: '检查手型图解（先入为主）', tag: '姿势', desc: '点开「❓ 新手指南」里的 3 张手型图解：左手指尖贴近品柱、右手小鱼际轻贴琴桥闷音、拨片只露 3mm 45° 斜切。' },
+                core: { title: '1500 元内二手挑琴 & 耳机静音方案核对', tag: '装备', desc: '重点看 Yamaha Pacifica 112V/012 或 Squier Affinity HSS（避开大双摇），配一个 NUX Mighty Plug Pro / 桌面小效果器即可深夜静音练琴。' },
+                jam: { title: '综合认音 + 节拍通关测试', tag: '90 BPM', desc: '在模式 03 连续答对 12 题（6弦+5弦），并用 AI 老师语音提问一次你最关心的买琴或手型问题！' },
+                why: '准备好装备与正确手型概念，拿到真琴的第一分钟就能直接调音开弹，不走弯路。',
+                env: { mode: 'quiz', tone: 'clean', scale: 'pentatonic_minor', bpm: 90, labTab: 'tuner', riffIdx: 0 }
+            }
+        ];
+
+        function getDailyCurriculum(day, hasGuitar) {
+            if (day <= 7) {
+                const base = PHASE0_DAYS[day - 1];
+                if (!hasGuitar) {
+                    return { phase: 'Phase 0 · 网页预习与启蒙', ...base };
+                }
+                return {
+                    phase: 'Phase 0 · 真琴开箱适应期',
+                    title: `${base.title}（真琴版）`,
+                    warmup: { ...base.warmup, desc: `【真琴实操】抱好琴调准 EADGBE 标准音！${base.warmup.desc}` },
+                    core: { ...base.core, desc: `【真琴实操】左手轻按对应品位、右手用拨片向下拨弦，对照网页音高监听确认声音干净不打品。${base.core.desc}` },
+                    jam: base.jam,
+                    why: base.why,
+                    env: base.env
+                };
+            }
+
+            const idx = day - 8; // 0 .. 172
+            const weaknesses = loadWeaknesses();
+            const topWeak = weaknesses[0];
+
+            const warmups = [
+                { title: '1-2-3-4 顺向爬格子热身', tag: '爬格', desc: '从 6 弦 5 品开始，食指-中指-无名指-小指依次按 5-6-7-8 品，手指尽量贴近品柱，不求快但求每个音饱满不打品。' },
+                { title: '1-3-2-4 交叉独立性热身', tag: '独立性', desc: '用 5-7-6-8 品顺序爬格子，重点训练无名指和小指的独立控制，保持手腕放松不耸肩。' },
+                { title: '空弦交替拨弦（下-上-下-上）', tag: '右手', desc: '左手轻扶琴弦消音，右手用拨片在 6 弦和 5 弦上做稳定的下上交替拨弦，感受拨片 45° 斜切过弦的弹性。' },
+                { title: '4-3-2-1 反向爬格子 + 移弦', tag: '爬格', desc: '小指先按 8 品再逐个往下松，练好高把位到低把位的肌肉放松与跨弦精准度。' },
+                { title: '6弦/5弦 盲按找根音热身', tag: '定位', desc: '看着模式 03 亮起的提示，真琴上用食指 2 秒内按准对应品位并拨响，让真琴监听判定音准！' }
+            ];
+
+            let warmupPick = { ...warmups[idx % warmups.length] };
+            if (topWeak && day % 3 === 0) {
+                warmupPick = {
+                    title: `针对弱点热身：${topWeak.target}`,
+                    tag: '错题巩固',
+                    desc: `你的弱点雷达记录了「${topWeak.detail}」。今天前 5 分钟先以 70% 慢速专门把它弹稳 5 遍再进入主线！`
+                };
+            }
+
+            // Phase 1: Day 8 - 30 (右手节拍 + 单音 Riff + 消音)
+            if (day <= 30) {
+                const bpm = 72 + Math.min(28, idx * 1);
+                const topics = [
+                    { title: '右手稳定下拨与 6 弦空弦消音', desc: '在电子鼓伴奏下只弹 6 弦空弦，第 4 拍用右手小鱼际瞬间切住琴弦完成干净休止，做到“想停就停”。', labTab: 'routine', riffIdx: 0 },
+                    { title: 'Palm Mute（琴桥闷音）颗粒感训练', desc: '打开「闷音训练器」选“经典8分闷音”，右手掌外侧轻贴琴桥，感受“嚓-嚓-嚓”的低沉金属颗粒感。', labTab: 'routine', riffIdx: 2 },
+                    { title: 'Lv.1 Seven Nation 单弦 Bassline 精练', desc: '只用食指在 5 弦上按 7-7-10-7-5-3-2，先开 75% 速度，注意滑动换把时手指不要离开弦太远。', labTab: 'riff', riffIdx: 0 },
+                    { title: 'Lv.2 Smoke 经典双音 Riff 与左手消音', desc: '用食指指肚同时轻按 4 弦和 3 弦同一品（0-3-5 / 0-3-6-5），每弹完一组立刻用左手轻抬止音。', labTab: 'riff', riffIdx: 1 },
+                    { title: '滑音（Slide）入门：让单音连起来', desc: '弹响 5 弦 5 品后手指不松开，保持压力滑到 7 品，让两个音像唱歌一样连贯过渡。', labTab: 'tuner', riffIdx: 0 }
+                ];
+                const t = topics[idx % topics.length];
+                return {
+                    phase: 'Phase 1 · 右手律动与单音 Riff',
+                    title: `Day ${day}：${t.title}`,
+                    warmup: warmupPick,
+                    core: { title: t.title, tag: `${bpm} BPM`, desc: hasGuitar ? t.desc : `【预习模式】${t.desc}（暂未拿到琴可先在指板点亮对应品位配合鼓点打拍子）` },
+                    jam: { title: '单音 Riff + 踩拍精准度挑战', tag: `${bpm} BPM`, desc: `开启真琴监听 + 电子鼓，争取在「音游踩拍」里连续打出 5 个以上 PERFECT！` },
+                    why: 'Phase 1 的核心是“右手比左手更重要”——先把节拍和消音练干净，后面的和弦与 Solo 才不会糊。',
+                    env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm, labTab: t.labTab, riffIdx: t.riffIdx, backingIdx: 0 }
+                };
+            }
+
+            // Phase 2: Day 31 - 60 (强力和弦 + 摇滚/电子节奏)
+            if (day <= 60) {
+                const pIdx = day - 31;
+                const bpm = 85 + Math.min(30, pIdx);
+                const topics = [
+                    { title: 'E5 / A5 跨弦强力和弦切换', desc: '食指按 5 弦 2 品（E5）与 4 弦 2 品（A5）之间来回切换，练习手腕几乎不动、只靠手指微调跨弦。', mode: 'powerchord', tone: 'overdrive', labTab: 'backing', backingIdx: 1, riffIdx: 2 },
+                    { title: 'G5 → A5 → B5 横向平移换把', desc: '保持食指与无名指“跨两品”的固定手型，在 6 弦 3品、5品、7品之间整手平移，不要散架。', mode: 'powerchord', tone: 'overdrive', labTab: 'backing', backingIdx: 1, riffIdx: 2 },
+                    { title: '强力和弦“废弦消音”秘籍', desc: '按 6 弦根音强力和弦时，食指指尖顶住 6 弦的同时，指腹顺势轻轻虚搭在 1-3 弦上，猛扫也不会出杂音！', mode: 'powerchord', tone: 'overdrive', labTab: 'routine', backingIdx: 2, riffIdx: 2 },
+                    { title: 'Lv.3 赛博朋克 E5 闷音推进', desc: '重音扫 E5 后紧接两下 6 弦空弦闷音（重-闷-闷-重-闷-闷），这是摇滚和工业电子最带感的律动公式。', mode: 'powerchord', tone: 'overdrive', labTab: 'riff', backingIdx: 2, riffIdx: 2 },
+                    { title: 'Lv.4 Daft 电子合成八度跳跃', desc: '切换「电子合成」音色，食指按 5 弦、无名指按 3 弦高两品，用食指指腹顺便闷住中间的 4 弦。', mode: 'explore', tone: 'synth', labTab: 'riff', backingIdx: 0, riffIdx: 3 }
+                ];
+                const t = topics[pIdx % topics.length];
+                return {
+                    phase: 'Phase 2 · 强力和弦与电子摇滚',
+                    title: `Day ${day}：${t.title}`,
+                    warmup: warmupPick,
+                    core: { title: t.title, tag: '强力和弦', desc: t.desc },
+                    jam: { title: '跟伴奏稳住 8 小节不掉拍', tag: `${bpm} BPM`, desc: `打开伴奏（可先开 75% 速度），把今天练的和弦推进连续弹完 2 轮不中断。` },
+                    why: 'Phase 2 让你真正具备“能跟着完整鼓贝斯伴奏弹完整段摇滚/电子节奏”的能力。',
+                    env: { mode: t.mode, tone: t.tone, scale: 'pentatonic_minor', bpm, labTab: t.labTab, riffIdx: t.riffIdx, backingIdx: t.backingIdx }
+                };
+            }
+
+            // Phase 3: Day 61 - 100 (Am 五声音阶 + 电吉他四大发声技巧)
+            if (day <= 100) {
+                const pIdx = day - 61;
+                const bpm = 80 + Math.min(30, Math.floor(pIdx * 0.8));
+                const topics = [
+                    { title: 'Am 五声音阶第 1 把位（5–8 品）上下行', desc: '食指守 5 品、无名指守 7 品、小指守 8 品，从 6 弦一路弹到 1 弦再原路返回，严格使用下上交替拨弦。', riffIdx: 4, backingIdx: 1 },
+                    { title: '击弦（Hammer-on）技巧训练', desc: '拨响 3 弦 5 品后不拨第二下，直接用无名指像小锤子一样垂直砸向 3 弦 7 品，让第二个音清脆响起！', riffIdx: 4, backingIdx: 1 },
+                    { title: '勾弦（Pull-off）技巧训练', desc: '先按好 1 弦 5 品与 8 品，拨响 8 品后，小指往下方微微“勾一下”弦再离开，让 5 品自然响起。', riffIdx: 4, backingIdx: 3 },
+                    { title: '全音推弦（Full Bend）音准突破', desc: '在 3 弦 7 品（D）向上推弦，用无名指+中指+食指三指合力往上推，直到音高刚好等于 9 品（E），开真琴监听校验音准！', riffIdx: 6, backingIdx: 1 },
+                    { title: '摇滚揉弦（Vibrato）——让长音会呼吸', desc: '按住 2 弦 8 品拨响后，手腕像拧门把手一样匀速上下微幅抖动琴弦，避免音符干瘪像电子琴。', riffIdx: 6, backingIdx: 3 }
+                ];
+                const t = topics[pIdx % topics.length];
+                return {
+                    phase: 'Phase 3 · Am 五声音阶与四大技巧',
+                    title: `Day ${day}：${t.title}`,
+                    warmup: warmupPick,
+                    core: { title: t.title, tag: 'Solo 技巧', desc: t.desc },
+                    jam: { title: 'Am 五声音阶自由即兴 5 分钟', tag: `${bpm} BPM`, desc: `打开「暗潮后朋克贝斯」或「80年代硬摇滚」伴奏，只在 5–8 品亮灯圆点里随便选 3 个音做问答式旋律！` },
+                    why: '击勾弦、推弦、揉弦是电吉他 Solo 有“人声哭腔和张力”的四大核心技巧。',
+                    env: { mode: 'explore', tone: 'overdrive', scale: 'pentatonic_minor', bpm, labTab: 'riff', riffIdx: t.riffIdx, backingIdx: t.backingIdx }
+                };
+            }
+
+            // Phase 4: Day 101 - 140 (跨把位串联 + 港摇抒情与《灰色轨迹》慢板突破)
+            if (day <= 140) {
+                const pIdx = day - 101;
+                const speedHint = pIdx < 15 ? '75% 慢速' : (pIdx < 30 ? '90% 中速' : '100% 原速');
+                const topics = [
+                    { title: 'Lv.7 港摇抒情风慢板 Solo 乐句精雕', desc: `打开 Riff 库 Lv.7（${speedHint}），重点打磨长音延音、3弦滑音与高音 1 弦的推弦情绪递进。`, riffIdx: 6, tone: 'overdrive' },
+                    { title: 'Am 五声音阶 5 品 → 12 品滑音串联', desc: '练习从第 1 把位（5-8品）通过 3 弦 7→9 品滑音，顺滑过渡到 10-12 品高把位，打破“只会在5品转圈”的瓶颈。', riffIdx: 4, tone: 'overdrive' },
+                    { title: '推弦最高点 + 揉弦组合（哭腔必杀技）', desc: '在 2 弦 8 品或 3 弦 7 品推到一个全音高点后先稳住半秒，再轻轻加上揉弦，注意全程保持其他弦消音。', riffIdx: 6, tone: 'overdrive' },
+                    { title: 'Lv.6 工业摇滚 Drop-Feel 重型 Riff', desc: `切到高增益失真，配合电子鼓练 6 弦快速闷音与 E5 强力和弦的极速切换（${speedHint}）。`, riffIdx: 5, tone: 'overdrive' },
+                    { title: '高把位 12–17 品高音区音准与手型控制', desc: '切换顶部指板到「0-24 品」，在 12-15 品高音区弹奏 Am 五声音阶，体会高把位品格变窄后的指尖微调。', riffIdx: 6, tone: 'overdrive' }
+                ];
+                const t = topics[pIdx % topics.length];
+                return {
+                    phase: 'Phase 4 · 跨把位与《灰色轨迹》慢板',
+                    title: `Day ${day}：${t.title}`,
+                    warmup: warmupPick,
+                    core: { title: t.title, tag: speedHint, desc: t.desc },
+                    jam: { title: '情绪渐强叙事练习', tag: '76-100 BPM', desc: '先用轻拨弦弹 4 小节抒情慢板，后 4 小节加大拨弦力度并切到失真高潮，练出旋律的动态起伏。' },
+                    why: 'Phase 4 正式把你从“单音/和弦玩家”升级为能弹出有画面感旋律的摇滚乐手。',
+                    env: { mode: 'explore', tone: t.tone, scale: 'pentatonic_minor', bpm: 84, labTab: 'riff', riffIdx: t.riffIdx, backingIdx: 1 }
+                };
+            }
+
+            // Phase 5: Day 141 - 180 (完整曲目实战 + 摇滚/电子融合创作)
+            const p5Idx = day - 141;
+            const topics5 = [
+                { title: '12 小节“节奏 + 主音”无缝切换实战', desc: '前 4 小节弹 E5/G5/A5 强力和弦节奏，后 4 小节立刻切到 5-8 品 Am 五声音阶弹旋律收尾，训练手型秒切。', tone: 'overdrive', labTab: 'backing', backingIdx: 1 },
+                { title: '电子合成（Synth）+ 电吉他融合 Riff 创作', desc: '切到「🎛️ 电子合成」音色 +「赛博朋克合成低音」伴奏，自己组合 4 个小节的 8 拍低音脉冲 Riff 并记下来。', tone: 'synth', labTab: 'backing', backingIdx: 0 },
+                { title: '听歌抓调性（Ear Training）实战', desc: '随便播放一首你喜欢的摇滚或电子歌，用 6 弦前 12 品一个一个试出最和谐的根音，找出它的主调。', tone: 'clean', labTab: 'tuner', backingIdx: 3 },
+                { title: '毕业曲目《灰色轨迹》慢板段落完整录音自检', desc: '用手机录下自己跟伴奏完整弹一遍 8-16 小节旋律，回听检查两个问题：拍子稳不稳？推弦和揉弦有没有杂音？', tone: 'overdrive', labTab: 'riff', backingIdx: 1 }
+            ];
+            const t5 = topics5[p5Idx % topics5.length];
+            return {
+                phase: 'Phase 5 · 完整曲目与个人融合创作',
+                title: `Day ${day}：${t5.title}`,
+                warmup: warmupPick,
+                core: { title: t5.title, tag: '实战毕业', desc: t5.desc },
+                jam: { title: '个人专属 5 分钟 Jam Session', tag: '105 BPM', desc: '关掉六线谱提示，只留伴奏，完全凭感觉在指板上自由演奏 5 分钟，享受电吉他带来的松弛与快乐！' },
+                why: '走到 Phase 5，你已经跨过了电吉他最难的新手门槛，可以自由挑歌扒谱、组自己的电子摇滚小样了。',
+                env: { mode: 'explore', tone: t5.tone, scale: 'pentatonic_minor', bpm: 105, labTab: t5.labTab, riffIdx: 6, backingIdx: t5.backingIdx }
+            };
+        }
+
+        function renderDailyMission() {
+            const prog = loadDailyProgress();
+            const day = prog.viewingDay;
+            const plan = getDailyCurriculum(day, prog.hasGuitar);
+
+            document.getElementById('daily-day-badge').textContent = `DAY ${day} / 180`;
+            document.getElementById('daily-phase-badge').textContent = plan.phase;
+            document.getElementById('daily-streak-badge').textContent = `🔥 连续打卡 ${prog.streak} 天`;
+
+            const gearBtn = document.getElementById('daily-gear-btn');
+            gearBtn.textContent = prog.hasGuitar
+                ? '🎸 当前：真琴实操期（点此切回预习）'
+                : '🎧 当前：网页预习期（点此切换已买琴）';
+            gearBtn.className = prog.hasGuitar
+                ? 'px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 font-semibold transition-all'
+                : 'px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-semibold transition-all';
+
+            const select = document.getElementById('daily-day-select');
+            if (select.options.length === 0) {
+                for (let d = 1; d <= 180; d++) {
+                    const opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = `Day ${d}`;
+                    opt.className = 'bg-slate-900 text-white';
+                    select.appendChild(opt);
+                }
+            }
+            select.value = String(day);
+
+            const doneCount = prog.completedDays.length;
+            const pct = Math.round((doneCount / 180) * 100);
+            document.getElementById('daily-title-text').textContent = plan.title;
+            document.getElementById('daily-progress-text').textContent = `已完成 ${doneCount} / 180 天 (${pct}%)`;
+            document.getElementById('daily-progress-bar').style.width = `${pct}%`;
+
+            document.getElementById('daily-warmup-title').textContent = plan.warmup.title;
+            document.getElementById('daily-warmup-tag').textContent = plan.warmup.tag;
+            document.getElementById('daily-warmup-desc').textContent = plan.warmup.desc;
+
+            document.getElementById('daily-core-title').textContent = plan.core.title;
+            document.getElementById('daily-core-tag').textContent = plan.core.tag;
+            document.getElementById('daily-core-desc').textContent = plan.core.desc;
+
+            document.getElementById('daily-jam-title').textContent = plan.jam.title;
+            document.getElementById('daily-jam-tag').textContent = plan.jam.tag;
+            document.getElementById('daily-jam-desc').textContent = plan.jam.desc;
+
+            document.getElementById('daily-why-text').textContent = `💡 今日意义：${plan.why}`;
+
+            const completeBtn = document.getElementById('daily-complete-btn');
+            const isAlreadyDone = prog.completedDays.includes(day);
+            if (isAlreadyDone && day < prog.currentDay) {
+                completeBtn.textContent = `↩️ 回到当前进度 (Day ${prog.currentDay})`;
+            } else if (day >= 180 && isAlreadyDone) {
+                completeBtn.textContent = '🏆 已完成 180 天全部课程！';
+            } else {
+                completeBtn.textContent = `✅ 今日打卡通关 (解锁 Day ${Math.min(180, day + 1)})`;
+            }
+        }
+
+        function toggleGearStatus() {
+            const prog = loadDailyProgress();
+            prog.hasGuitar = !prog.hasGuitar;
+            saveDailyProgress(prog);
+            renderDailyMission();
+        }
+
+        function jumpToDay(dayVal) {
+            const prog = loadDailyProgress();
+            prog.viewingDay = Math.min(180, Math.max(1, parseInt(dayVal, 10) || 1));
+            saveDailyProgress(prog);
+            renderDailyMission();
+        }
+
+        function previewAdjacentDay(delta) {
+            const prog = loadDailyProgress();
+            prog.viewingDay = Math.min(180, Math.max(1, prog.viewingDay + delta));
+            saveDailyProgress(prog);
+            renderDailyMission();
+        }
+
+        function launchDailyEnvironment() {
+            const prog = loadDailyProgress();
+            const plan = getDailyCurriculum(prog.viewingDay, prog.hasGuitar);
+            const env = plan.env || {};
+
+            if (env.tone) setToneMode(env.tone);
+            if (env.scale) {
+                const scaleSel = document.getElementById('scale-select');
+                if (scaleSel) scaleSel.value = env.scale;
+            }
+            if (env.mode) setMode(env.mode);
+            if (env.bpm) {
+                const slider = document.getElementById('drum-bpm-slider');
+                if (slider) {
+                    slider.value = Math.min(140, Math.max(60, env.bpm));
+                    updateDrumBpm(slider.value);
+                }
+            }
+            if (typeof env.riffIdx === 'number') {
+                const riffSel = document.getElementById('riff-select');
+                if (riffSel) riffSel.value = String(env.riffIdx);
+                selectRiff(env.riffIdx);
+            }
+            if (typeof env.backingIdx === 'number') {
+                selectBackingStyle(env.backingIdx);
+            }
+            if (env.labTab) switchLabTab(env.labTab);
+
+            document.getElementById('strings-container')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function askAiForDailyLesson() {
+            const prog = loadDailyProgress();
+            const plan = getDailyCurriculum(prog.viewingDay, prog.hasGuitar);
+            const gearDesc = prog.hasGuitar ? '我已有真琴和耳机设备' : '我还没买琴，目前用网页预习';
+            const msg = `老师，我现在练到【Day ${prog.viewingDay}/180：${plan.title}】（${gearDesc}）。今天的核心任务是「${plan.core.title}」，请用大白话带我开始今天的练习，给我1个最关键的注意事项和1个小口诀。`;
+            document.getElementById('ai-user-input').value = msg;
+            scrollToAiTutor();
+            sendAiMessage();
+        }
+
+        function completeDailyMission() {
+            const prog = loadDailyProgress();
+            const day = prog.viewingDay;
+            if (prog.completedDays.includes(day) && day < prog.currentDay) {
+                prog.viewingDay = prog.currentDay;
+                saveDailyProgress(prog);
+                renderDailyMission();
+                return;
+            }
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+            if (!prog.completedDays.includes(day)) {
+                prog.completedDays.push(day);
+            }
+            if (prog.lastCheckinDate !== todayStr) {
+                const yest = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+                prog.streak = (prog.lastCheckinDate === yest) ? (prog.streak + 1) : 1;
+                prog.lastCheckinDate = todayStr;
+            }
+            if (day >= prog.currentDay && prog.currentDay < 180) {
+                prog.currentDay = day + 1;
+            }
+            prog.viewingDay = prog.currentDay;
+            saveDailyProgress(prog);
+            renderDailyMission();
+
+            practiceCombo += 5;
+            updateComboUI();
+            initAudioAndTest();
+            appendAiChat('assistant', `🎉 恭喜完成 Day ${day} 打卡！连续打卡 ${prog.streak} 天，已为你解锁 Day ${prog.currentDay} 的新内容！`);
+            speakText(`恭喜完成第${day}天打卡！已经为你解锁下一天的练习内容。`);
+        }
+
         // 初始化页面
         window.addEventListener('DOMContentLoaded', () => {
             buildFretboardSkeleton();
@@ -3164,6 +3648,7 @@ E|--0--|  (6弦最粗)</pre>
             updateRoutineUI();
             renderRhythmGrid();
             renderRiffTab();
+            renderDailyMission();
             refreshAudioInputs();
         });
     </script>
