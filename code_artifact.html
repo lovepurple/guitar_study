@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberFret // 电吉他摇滚与电子乐理指板实验室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            bg: '#0b0e14',
+                            card: '#131822',
+                            border: '#1f293a',
+                            cyan: '#00f0ff',
+                            purple: '#b829ea',
+                            pink: '#ff2a85',
+                            amber: '#ffb703'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0e14;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        /* 自定义滚动条，方便指板横向滑动 */
+        ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0e14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283548;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff;
+        }
+        /* 指板木纹与金属品丝质感 */
+        .fretboard-wood {
+            background: linear-gradient(180deg, #181512 0%, #231e19 50%, #161310 100%);
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.85);
+        }
+        .fret-wire {
+            background: linear-gradient(90deg, #52525b 0%, #d4d4d8 50%, #3f3f46 100%);
+            box-shadow: 1px 0 3px rgba(0,0,0,0.8);
+        }
+        .nut-wire {
+            background: linear-gradient(90deg, #e4e4e7 0%, #ffffff 50%, #a1a1aa 100%);
+            box-shadow: 2px 0 6px rgba(0, 240, 255, 0.3);
+        }
+        /* 琴弦金属光泽与粗细渐变 */
+        .guitar-string {
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(161,161,170,0.9) 50%, rgba(82,82,91,0.9) 100%);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.9);
+            transition: transform 0.08s ease;
+        }
+        .string-vibrate {
+            animation: vibrate 0.18s linear;
+        }
+        @keyframes vibrate {
+            0% { transform: translateY(0px); }
+            25% { transform: translateY(-2px); }
+            50% { transform: translateY(2px); }
+            75% { transform: translateY(-1.5px); }
+            100% { transform: translateY(0px); }
+        }
+        /* 音符发光呼吸动画 */
+        .note-pulse {
+            animation: pulseGlow 0.45s ease-out;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1.35); box-shadow: 0 0 22px #00f0ff; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-cyan selection:text-black">
+
+    <!-- 顶部导航与养伤引导栏 -->
+    <header class="border-b border-cyber-border bg-cyber-card/90 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-cyan to-cyber-purple flex items-center justify-center text-black font-extrabold text-xl shadow-lg shadow-cyber-cyan/20">
+                    ⚡
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg md:text-xl font-extrabold tracking-tight text-white">
+                            CyberFret <span class="text-cyber-cyan font-mono text-sm font-normal">// 摇滚×电子乐理实验室</span>
+                        </h1>
+                    </div>
+                    <p class="text-xs text-slate-400">
+                        🎧 <span class="text-cyber-amber font-medium">零基础随手练：</span>不用先看懂五线谱，点一点指板听声音，快速打通电吉他指板、强力和弦与电子摇滚律动。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 音色与总音量控制区 -->
+            <div class="flex flex-wrap items-center gap-2 bg-cyber-bg p-1.5 rounded-xl border border-cyber-border">
+                <span class="text-xs text-slate-400 px-2 font-medium">吉他音色:</span>
+                <button id="tone-clean" onclick="setToneMode('clean')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white">
+                    🌊 电子清音 (Clean)
+                </button>
+                <button id="tone-overdrive" onclick="setToneMode('overdrive')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-cyber-purple to-cyber-pink text-white shadow-md shadow-cyber-purple/30">
+                    🔥 摇滚失真 (Overdrive)
+                </button>
+                <button onclick="initAudioAndTest()" title="测试声音" class="ml-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyber-cyan text-xs font-mono border border-slate-700">
+                    🔊 试音
+                </button>
+                <button onclick="toggleGuide()" id="guide-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-cyber-amber/15 hover:bg-cyber-amber/25 text-cyber-amber text-xs font-semibold border border-cyber-amber/40">
+                    ❓ 新手指南
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主工作区 -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 space-y-5 flex-grow">
+
+        <!-- 新手 30 秒使用指南（可折叠） -->
+        <section id="beginner-guide" class="bg-gradient-to-r from-cyber-card via-slate-900 to-cyber-card border border-cyber-amber/40 rounded-2xl p-4 shadow-lg">
+            <div class="flex items-start justify-between gap-4 mb-2.5">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-cyber-amber text-black text-xs font-extrabold">零基础怎么用这个网页？</span>
+                    <span class="text-xs text-slate-400">不用懂五线谱，按下面 4 步点一点就明白</span>
+                </div>
+                <button onclick="toggleGuide()" class="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800">收起 ✕</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <div class="bg-cyber-bg/80 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-cyber-cyan mb-1">第 1 步：先点「🔊 试音」</div>
+                    <p class="text-slate-300 leading-relaxed">浏览器需要你点一下才能出声。默认是<strong>摇滚失真</strong>音色，也可以切到<strong>电子清音</strong>。</p>
+                </div>
+                <div class="bg-cyber-bg/80 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-cyber-purple mb-1">第 2 步：玩「模式 02」听爽感</div>
+                    <p class="text-slate-300 leading-relaxed">点一下「赛博重型脉冲 Riff」的 ▶ 按钮，或者直接点最粗的 <strong>6 弦/5 弦</strong>，听听电吉他“一按就炸”的强力和弦。</p>
+                </div>
+                <div class="bg-cyber-bg/80 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-emerald-400 mb-1">第 3 步：开「电子鼓机」练真琴</div>
+                    <p class="text-slate-300 leading-relaxed">拿到实体琴后，打开下方<strong>独立电子鼓机</strong>（建议从 80 BPM 开始），边听鼓点边练习拨弦与闷音，比干听节拍器爽得多。</p>
+                </div>
+                <div class="bg-cyber-bg/80 border border-slate-800 rounded-xl p-3">
+                    <div class="font-bold text-cyber-amber mb-1">第 4 步：每天 3 分钟认音</div>
+                    <p class="text-slate-300 leading-relaxed">切到「模式 03」，只认<strong>6 弦和 5 弦前 12 品</strong>。这两根粗弦认熟了，摇滚和弦位置你就全通了。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 独立实用工具条：电子鼓节拍器 + 6弦标准调音参考 -->
+        <section class="bg-cyber-card border border-cyber-border rounded-2xl p-3.5 md:p-4 shadow-lg flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- 左侧：电子鼓机节拍器 -->
+            <div class="flex flex-wrap items-center gap-3">
+                <button id="drum-toggle-btn" onclick="toggleDrumMetronome()" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center gap-2 transition-all">
+                    <span id="drum-btn-icon">▶</span>
+                    <span id="drum-btn-text">开启电子鼓节拍器</span>
+                </button>
+
+                <!-- 4 拍视觉脉冲灯 -->
+                <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyber-bg border border-slate-800" title="4/4 拍指示灯">
+                    <span id="beat-dot-0" class="w-2.5 h-2.5 rounded-full bg-slate-700 transition-all"></span>
+                    <span id="beat-dot-1" class="w-2.5 h-2.5 rounded-full bg-slate-700 transition-all"></span>
+                    <span id="beat-dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700 transition-all"></span>
+                    <span id="beat-dot-3" class="w-2.5 h-2.5 rounded-full bg-slate-700 transition-all"></span>
+                </div>
+
+                <div class="flex items-center gap-2 bg-cyber-bg px-3 py-1.5 rounded-xl border border-slate-800">
+                    <span class="text-xs text-slate-400">速度:</span>
+                    <input id="drum-bpm-slider" type="range" min="60" max="140" value="85" oninput="updateDrumBpm(this.value)" class="w-24 accent-emerald-400 cursor-pointer">
+                    <span id="drum-bpm-val" class="text-xs font-mono font-bold text-emerald-400 w-14">85 BPM</span>
+                </div>
+            </div>
+
+            <!-- 右侧：6 弦标准调音参考音 -->
+            <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-xs text-slate-400 mr-1 font-medium">🎸 空弦标准音参考:</span>
+                <button onclick="playTunerRef(6, 40, '6弦 E2')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">6E</button>
+                <button onclick="playTunerRef(5, 45, '5弦 A2')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">5A</button>
+                <button onclick="playTunerRef(4, 50, '4弦 D3')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">4D</button>
+                <button onclick="playTunerRef(3, 55, '3弦 G3')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">3G</button>
+                <button onclick="playTunerRef(2, 59, '2弦 B3')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">2B</button>
+                <button onclick="playTunerRef(1, 64, '1弦 E4')" class="px-2.5 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 hover:border-cyber-cyan transition-all">1E</button>
+            </div>
+        </section>
+
+        <!-- 模式切换选项卡 -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button onclick="switchMode('explore')" id="tab-explore" class="mode-tab p-3.5 rounded-2xl border border-cyber-cyan bg-cyber-cyan/10 text-left transition-all shadow-lg shadow-cyber-cyan/5">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-cyber-cyan">01. 指板音阶透视镜</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-cyber-cyan/20 text-cyber-cyan font-mono">自由探索</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">点击任意品格听音，看清摇滚/电子常用音阶分布</p>
+            </button>
+
+            <button onclick="switchMode('powerchord')" id="tab-powerchord" class="mode-tab p-3.5 rounded-2xl border border-cyber-border bg-cyber-card hover:border-cyber-purple/60 text-left transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-white">02. 强力和弦 & 电子摇滚进行</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-cyber-purple/20 text-cyber-purple font-mono">核心实战</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">1指按根音+5度音，一键播放 Muse/Linkin Park 风 Riff</p>
+            </button>
+
+            <button onclick="switchMode('quiz')" id="tab-quiz" class="mode-tab p-3.5 rounded-2xl border border-cyber-border bg-cyber-card hover:border-cyber-amber/60 text-left transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-white">03. 每日5分钟指板认音挑战</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-cyber-amber/20 text-cyber-amber font-mono">左手单手可玩</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">像玩游戏一样记住指板音名与强力和弦位置</p>
+            </button>
+        </div>
+
+        <!-- 动态控制面板区（随上面 3 个模式切换） -->
+        <section id="control-panel" class="bg-cyber-card border border-cyber-border rounded-2xl p-4 md:p-5 shadow-xl">
+            
+            <!-- 模式 1 控制内容：音阶与显示设置 -->
+            <div id="panel-explore" class="space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">选择摇滚/电子常用音阶</label>
+                            <select id="scale-select" onchange="renderFretboard()" class="bg-cyber-bg border border-slate-700 text-white text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-cyber-cyan">
+                                <option value="Am_pentatonic" selected>A 小调五声音阶 (摇滚 Solo 万能钥匙)</option>
+                                <option value="Em_pentatonic">E 小调五声音阶 (最贴合空弦的重型摇滚)</option>
+                                <option value="A_natural_minor">A 自然小调音阶 (史诗/忧郁电子摇滚核心)</option>
+                                <option value="E_natural_minor">E 自然小调音阶 (Muse / Linkin Park 常用调)</option>
+                                <option value="D_dorian">D 多利亚调式 Dorian (赛博朋克/电子律动感)</option>
+                                <option value="C_major">C 大调音阶 (基础乐理标尺 1234567)</option>
+                                <option value="all_notes">显示全部 12 个半音 (指板全览)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">指板显示标签</label>
+                            <div class="inline-flex rounded-xl bg-cyber-bg p-1 border border-slate-700">
+                                <button onclick="setLabelMode('note')" id="lbl-note" class="px-3 py-1 rounded-lg text-xs font-semibold bg-cyber-cyan text-black">音名 (C D E)</button>
+                                <button onclick="setLabelMode('degree')" id="lbl-degree" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">级数 (1 ♭3 4)</button>
+                                <button onclick="setLabelMode('dot')" id="lbl-dot" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">仅高亮位置</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">快捷听音示范</label>
+                            <button onclick="playScaleDemo()" id="scale-demo-btn" class="px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan text-xs font-bold transition-all">
+                                ▶ 顺序示范弹一遍
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 大白话乐理小贴士 -->
+                    <div id="scale-tip" class="lg:max-w-md bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 text-xs leading-relaxed text-slate-300">
+                        <span class="text-cyber-cyan font-bold">💡 为什么先看 A 小调五声音阶？</span><br>
+                        它去掉了容易打架的半音，只保留最和谐的 5 个音。在 5 品位置形成一个极其规整的“盒子指型”，几乎所有摇滚电吉他手的第一段 Solo 都是从这里起飞的。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模式 2 控制内容：强力和弦与电子摇滚进行 -->
+            <div id="panel-powerchord" class="hidden space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                    <!-- 左侧说明 -->
+                    <div class="lg:col-span-5 bg-cyber-bg border border-slate-800 rounded-xl p-3.5 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-cyber-purple/20 text-cyber-purple text-xs font-bold">摇滚作弊器</span>
+                            <h3 class="text-sm font-bold text-white">什么是强力和弦 (Power Chord)？</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            传统和弦要按 3~4 根弦，而电吉他摇滚与电子乐最爱用的<strong>强力和弦（如 E5, A5）只需要“根音 + 往下一根弦右移两品的五度音”</strong>。没有大调或小调的色彩限制，开失真音色扫下去极其厚重有力量！
+                        </p>
+                        <p class="text-xs text-cyber-cyan font-medium">
+                            👉 试试看：直接点击下方指板的<strong>第 6 弦（最粗）或第 5 弦</strong>任意品格，自动生成并弹响强力和弦！
+                        </p>
+                        <!-- 实时六线谱 (TAB) 对照小黑板 -->
+                        <div class="bg-slate-950/90 border border-slate-700/80 rounded-lg p-2.5 font-mono text-[11px] text-emerald-300">
+                            <div class="text-[10px] text-slate-400 mb-1">📄 当前强力和弦对应六线谱 (TAB) 写法：</div>
+                            <pre id="powerchord-tab-preview" class="leading-tight text-cyber-cyan">e|-----|  (1弦)
+B|-----|  (2弦)
+G|-----|  (3弦)
+D|--2--|  (4弦)
+A|--2--|  (5弦)
+E|--0--|  (6弦最粗)</pre>
+                        </div>
+                    </div>
+
+                    <!-- 右侧预设进行播放器 -->
+                    <div class="lg:col-span-7 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">🎸 经典摇滚/电子进行自动伴奏演示：</span>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs text-slate-400">速度:</label>
+                                <input id="bpm-slider" type="range" min="75" max="140" value="105" oninput="updateBpm(this.value)" class="w-24 accent-cyber-purple cursor-pointer">
+                                <span id="bpm-val" class="text-xs font-mono text-cyber-cyan w-14">105 BPM</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <button onclick="toggleProgression(0)" id="prog-btn-0" class="prog-btn p-3 rounded-xl border border-slate-700 bg-cyber-bg hover:border-cyber-purple text-left transition-all">
+                                <div class="text-xs font-bold text-white flex justify-between">
+                                    <span>Linkin Park 史诗风</span>
+                                    <span class="play-icon text-cyber-purple">▶</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-1">Em - C - G - D (i-VI-III-VII)</div>
+                            </button>
+
+                            <button onclick="toggleProgression(1)" id="prog-btn-1" class="prog-btn p-3 rounded-xl border border-slate-700 bg-cyber-bg hover:border-cyber-purple text-left transition-all">
+                                <div class="text-xs font-bold text-white flex justify-between">
+                                    <span>赛博重型脉冲 Riff</span>
+                                    <span class="play-icon text-cyber-purple">▶</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-1">E5 - G5 - A5 - B5 (低音推进)</div>
+                            </button>
+
+                            <button onclick="toggleProgression(2)" id="prog-btn-2" class="prog-btn p-3 rounded-xl border border-slate-700 bg-cyber-bg hover:border-cyber-purple text-left transition-all">
+                                <div class="text-xs font-bold text-white flex justify-between">
+                                    <span>暗黑电子律动</span>
+                                    <span class="play-icon text-cyber-purple">▶</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-1">Am - F - Dm - E5 (小调张力)</div>
+                            </button>
+                        </div>
+
+                        <div id="now-playing-bar" class="hidden items-center justify-between bg-cyber-purple/15 border border-cyber-purple/40 rounded-xl px-3.5 py-2">
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="w-2 h-2 rounded-full bg-cyber-pink animate-ping"></span>
+                                <span class="text-slate-300">正在循环演奏：</span>
+                                <span id="current-chord-display" class="font-mono font-bold text-cyber-cyan text-sm">E5</span>
+                            </div>
+                            <button onclick="stopProgression()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-semibold">
+                                ⏹ 停止播放
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模式 3 控制内容：每日 5 分钟小测验 -->
+            <div id="panel-quiz" class="hidden space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-cyber-amber/20 text-cyber-amber text-xs font-bold">左手单手训练</span>
+                            <div class="inline-flex rounded-lg bg-cyber-bg p-0.5 border border-slate-700 text-xs">
+                                <button onclick="setQuizSubMode('identify')" id="qsub-identify" class="px-2.5 py-1 rounded-md bg-cyber-amber text-black font-bold">模式 A：看位置猜音名</button>
+                                <button onclick="setQuizSubMode('power5')" id="qsub-power5" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white">模式 B：找强力和弦五度音</button>
+                            </div>
+                        </div>
+                        <p id="quiz-prompt" class="text-sm md:text-base font-bold text-white pt-1">
+                            题目加载中...
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-4 bg-cyber-bg px-4 py-2.5 rounded-xl border border-slate-800">
+                        <div class="text-center">
+                            <div class="text-[10px] text-slate-400 uppercase">连对数</div>
+                            <div id="quiz-streak" class="text-lg font-mono font-extrabold text-cyber-cyan">0</div>
+                        </div>
+                        <div class="h-7 w-px bg-slate-800"></div>
+                        <div class="text-center">
+                            <div class="text-[10px] text-slate-400 uppercase">总得分</div>
+                            <div id="quiz-score" class="text-lg font-mono font-extrabold text-cyber-amber">0</div>
+                        </div>
+                        <button onclick="nextQuizQuestion()" class="ml-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700">
+                            换一题 ↻
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模式 A 的音名选项按钮区 -->
+                <div id="quiz-options-grid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2 pt-1">
+                    <!-- JS 动态生成 12 个音名按钮 -->
+                </div>
+                <div id="quiz-feedback" class="text-xs font-medium min-h-[20px]"></div>
+            </div>
+
+        </section>
+
+        <!-- 核心互动区：24品电吉他指板可视化 -->
+        <section class="bg-cyber-card border border-cyber-border rounded-2xl p-4 md:p-5 shadow-2xl space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <span>🎸 标准定音指板 (E A D G B E)</span>
+                    </h2>
+                    <div class="inline-flex rounded-lg bg-cyber-bg p-0.5 border border-slate-700 text-xs">
+                        <button onclick="setFretRange(12)" id="range-12-btn" class="px-2.5 py-1 rounded-md bg-cyber-cyan text-black font-bold">新手 0–12 品</button>
+                        <button onclick="setFretRange(24)" id="range-24-btn" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white">完整 0–24 品</button>
+                    </div>
+                    <span id="last-played-badge" class="px-2.5 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-xs font-mono text-cyber-cyan">
+                        点击任意品格发声
+                    </span>
+                </div>
+
+                <!-- 图例说明 -->
+                <div class="flex items-center gap-4 text-xs text-slate-400">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-cyber-pink inline-block shadow shadow-cyber-pink"></span>
+                        <span>根音 (Root)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-cyber-cyan inline-block shadow shadow-cyber-cyan"></span>
+                        <span>音阶内音 / 五度音</span>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-slate-700 inline-block"></span>
+                        <span>音阶外音 (可点)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 可横向滚动的指板容器 -->
+            <div class="overflow-x-auto pb-2 select-none">
+                <div id="fretboard-wrapper" class="min-w-[680px] relative rounded-xl overflow-hidden border border-slate-700/80 fretboard-wood">
+                    <!-- 品格编号行 -->
+                    <div id="fret-numbers-row" class="flex bg-cyber-bg/95 border-b border-slate-800 text-[11px] font-mono text-slate-400">
+                        <!-- JS 生成 0 - 24 品编号 -->
+                    </div>
+
+                    <!-- 6 根琴弦与品格网格 -->
+                    <div id="strings-container" class="relative py-2 space-y-0">
+                        <!-- JS 生成 1弦(最细) 到 6弦(最粗) -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-400 gap-1 pt-1">
+                <span>💡 视角说明：最上方为<strong>第 1 弦（最细，高音 E）</strong>，最下方为<strong>第 6 弦（最粗，低音 E）</strong>——这与你低头看自己怀里吉他的六线谱（TAB）视角完全一致！</span>
+                <span class="font-mono text-slate-500">支持键盘数字键 1-6 快速拨响空弦</span>
+            </div>
+        </section>
+
+        <!-- 底部新手快速入门知识卡片（精简大白话） -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-cyber-card/70 border border-cyber-border rounded-2xl p-4">
+                <h3 class="text-xs font-bold text-cyber-cyan uppercase tracking-wider mb-1.5">01. 指板记忆第一铁律</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    相邻两品之间永远差<strong>半音</strong>。记住口诀：<strong>“E 和 F 挨一起，B 和 C 挨一起”</strong>（即 3-4 之间、7-1 之间没有黑键），其余音名中间都隔一个升/降半音（#）。第 12 品（双圆点处）是空弦音的高八度完全重复！
+                </p>
+            </div>
+            <div class="bg-cyber-card/70 border border-cyber-border rounded-2xl p-4">
+                <h3 class="text-xs font-bold text-cyber-purple uppercase tracking-wider mb-1.5">02. 摇滚与电子的音色秘密</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    摇滚和电子乐很少弹复杂的 6 根弦大横按，而是大量使用<strong>低音弦的强力和弦（Power Chord）</strong>制造厚度，再配合<strong>小调五声音阶</strong>或<strong>多利亚调式（Dorian）</strong>在高音弦弹奏充满科技感与张力的旋律线。
+                </p>
+            </div>
+            <div class="bg-cyber-card/70 border border-cyber-border rounded-2xl p-4">
+                <h3 class="text-xs font-bold text-cyber-amber uppercase tracking-wider mb-1.5">03. 买琴前/下班后怎么用？</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    每天花 3–5 分钟在“模式 03”里盲猜<strong>第 6 弦和第 5 弦前 12 品的音名</strong>。只要把这两根最粗的低音弦认熟，拿到琴后你就能立刻在指板上找到任何一首摇滚歌曲的强力和弦位置。
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-cyber-border py-4 text-center text-xs text-slate-500">
+        CyberFret 实验室 🎸 每天 15–30 分钟，开启你的电吉他摇滚与电子律动之旅
+    </footer>
+
+    <script>
+        // ==========================================
+        // 1. 乐理基础数据定义 (标准 EADGBE 定音)
+        // ==========================================
+        const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        
+        // 6弦(index 5) 到 1弦(index 0) 的标准 MIDI 音高与空弦音名
+        // 视觉上第 1 行显示 1弦 (E4 = 64)，第 6 行显示 6弦 (E2 = 40)
+        const STRINGS = [
+            { stringNum: 1, name: 'E', octave: 4, midi: 64, thickness: 'h-[1.5px]', desc: '1弦 (最细)' },
+            { stringNum: 2, name: 'B', octave: 3, midi: 59, thickness: 'h-[2px]',   desc: '2弦' },
+            { stringNum: 3, name: 'G', octave: 3, midi: 55, thickness: 'h-[2.5px]', desc: '3弦' },
+            { stringNum: 4, name: 'D', octave: 3, midi: 50, thickness: 'h-[3px]',   desc: '4弦' },
+            { stringNum: 5, name: 'A', octave: 2, midi: 45, thickness: 'h-[3.5px]', desc: '5弦' },
+            { stringNum: 6, name: 'E', octave: 2, midi: 40, thickness: 'h-[4.5px]', desc: '6弦 (最粗)' }
+        ];
+
+        let FRET_COUNT = 12; // 默认新手 0-12 品视图，可切换至 24 品
+        const INLAY_FRETS = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
+
+        // 常用摇滚与电子音阶库
+        const SCALES = {
+            Am_pentatonic: {
+                root: 'A',
+                intervals: [0, 3, 5, 7, 10],
+                degrees: ['1', '♭3', '4', '5', '♭7'],
+                tip: '💡 <strong>A 小调五声音阶 (A C D E G)：</strong>摇滚电吉他的“万能钥匙”。去掉了半音冲突，第 5 品～第 8 品的“盒子指型”极好上手，几乎能套进所有摇滚伴奏里即兴。'
+            },
+            Em_pentatonic: {
+                root: 'E',
+                intervals: [0, 3, 5, 7, 10],
+                degrees: ['1', '♭3', '4', '5', '♭7'],
+                tip: '💡 <strong>E 小调五声音阶 (E G A B D)：</strong>最能发挥电吉他 6 弦空弦（低音 E）轰鸣感的音阶，重型摇滚与硬摇滚最爱用。'
+            },
+            A_natural_minor: {
+                root: 'A',
+                intervals: [0, 2, 3, 5, 7, 8, 10],
+                degrees: ['1', '2', '♭3', '4', '5', '♭6', '♭7'],
+                tip: '💡 <strong>A 自然小调音阶 (A B C D E F G)：</strong>带有强烈的史诗感、忧郁感与力量感，现代电子摇滚（如 Linkin Park）高频使用的核心调式。'
+            },
+            E_natural_minor: {
+                root: 'E',
+                intervals: [0, 2, 3, 5, 7, 8, 10],
+                degrees: ['1', '2', '♭3', '4', '5', '♭6', '♭7'],
+                tip: '💡 <strong>E 自然小调音阶：</strong>Muse 等英伦迷幻电子摇滚乐队的标志性调性，低音沉稳、高音充满戏剧张力。'
+            },
+            D_dorian: {
+                root: 'D',
+                intervals: [0, 2, 3, 5, 7, 9, 10],
+                degrees: ['1', '2', '♭3', '4', '5', '6', '♭7'],
+                tip: '💡 <strong>D 多利亚调式 (Dorian)：</strong>在小调的基础上把第 6 音升高半音（还原6），听起来既有小调的酷感，又带有一丝迷幻、赛博朋克与电子舞曲的律动。'
+            },
+            C_major: {
+                root: 'C',
+                intervals: [0, 2, 4, 5, 7, 9, 11],
+                degrees: ['1', '2', '3', '4', '5', '6', '7'],
+                tip: '💡 <strong>C 大调音阶 (Do Re Mi Fa Sol La Si)：</strong>所有现代乐理的标尺，没有升降号，明亮阳光，适合用来理解音程距离。'
+            },
+            all_notes: {
+                root: 'C',
+                intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                degrees: ['1', '♯1', '2', '♯2', '3', '4', '♯4', '5', '♯5', '6', '♯6', '7'],
+                tip: '💡 <strong>指板全半音视图：</strong>每一品代表一个半音。注意观察 E-F 和 B-C 之间没有升降号，以及第 12 品与第 0 品（空弦）完全一致。'
+            }
+        };
+
+        // 预设电子/摇滚和弦进行库 (用指板坐标表示强力和弦：根音 + 五度音 + 八度音)
+        const PROGRESSIONS = [
+            {
+                name: 'Linkin Park 史诗风',
+                steps: [
+                    { label: 'E5 (i级)', notes: [{s: 6, f: 0}, {s: 5, f: 2}, {s: 4, f: 2}] },
+                    { label: 'C5 (VI级)', notes: [{s: 5, f: 3}, {s: 4, f: 5}, {s: 3, f: 5}] },
+                    { label: 'G5 (III级)', notes: [{s: 6, f: 3}, {s: 5, f: 5}, {s: 4, f: 5}] },
+                    { label: 'D5 (VII级)', notes: [{s: 5, f: 5}, {s: 4, f: 7}, {s: 3, f: 7}] }
+                ]
+            },
+            {
+                name: '赛博重型脉冲 Riff',
+                steps: [
+                    { label: 'E5 (低音轰鸣)', notes: [{s: 6, f: 0}, {s: 5, f: 2}] },
+                    { label: 'G5 (蓄力上行)', notes: [{s: 6, f: 3}, {s: 5, f: 5}] },
+                    { label: 'A5 (能量爆发)', notes: [{s: 6, f: 5}, {s: 5, f: 7}] },
+                    { label: 'B5 (张力顶点)', notes: [{s: 6, f: 7}, {s: 5, f: 9}] }
+                ]
+            },
+            {
+                name: '暗黑电子律动',
+                steps: [
+                    { label: 'A5 (主和弦)', notes: [{s: 5, f: 0}, {s: 4, f: 2}, {s: 3, f: 2}] },
+                    { label: 'F5 (暗黑下沉)', notes: [{s: 6, f: 1}, {s: 5, f: 3}, {s: 4, f: 3}] },
+                    { label: 'D5 (情绪过渡)', notes: [{s: 5, f: 5}, {s: 4, f: 7}, {s: 3, f: 7}] },
+                    { label: 'E5 (属音回归)', notes: [{s: 6, f: 0}, {s: 5, f: 2}, {s: 4, f: 2}] }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 2. 全局状态管理
+        // ==========================================
+        let currentMode = 'explore'; // 'explore' | 'powerchord' | 'quiz'
+        let toneMode = 'overdrive';  // 'clean' | 'overdrive'
+        let labelMode = 'note';      // 'note' | 'degree' | 'dot'
+        let activePowerChord = [];   // [{s, f, role}]
+        
+        // 自动伴奏播放器状态
+        let progTimer = null;
+        let currentProgIndex = -1;
+        let currentStepIndex = 0;
+        let bpm = 105;
+
+        // 测验状态
+        let quizSubMode = 'identify'; // 'identify' | 'power5'
+        let currentQuiz = null;
+        let quizScore = 0;
+        let quizStreak = 0;
+
+        let drumTimer = null;
+        let drumBeatIndex = 0;
+        let drumBpm = 85;
+        let scaleDemoTimers = [];
+
+        // ==========================================
+        // 3. Web Audio API 电吉他与电子鼓音色合成器
+        // ==========================================
+        let audioCtx = null;
+        let distortionCurve = null;
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                distortionCurve = makeDistortionCurve(140);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 生成失真效果器波形曲线
+        function makeDistortionCurve(amount) {
+            const k = typeof amount === 'number' ? amount : 50;
+            const n_samples = 44100;
+            const curve = new Float32Array(n_samples);
+            const deg = Math.PI / 180;
+            for (let i = 0; i < n_samples; ++i) {
+                const x = (i * 2) / n_samples - 1;
+                curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+            }
+            return curve;
+        }
+
+        function midiToFreq(midi) {
+            return 440 * Math.pow(2, (midi - 69) / 12);
+        }
+
+        // 播放单个电吉他音符
+        function playGuitarNote(midi, duration = 1.2, delay = 0) {
+            try {
+                ensureAudioContext();
+                const now = audioCtx.currentTime + delay;
+                const freq = midiToFreq(midi);
+
+                // 双振荡器叠加模拟电吉他拾音器谐波
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                const gainNode = audioCtx.createGain();
+
+                if (toneMode === 'overdrive') {
+                    // 摇滚失真 + 电子合成质感
+                    osc1.type = 'sawtooth';
+                    osc2.type = 'square';
+                    osc1.frequency.setValueAtTime(freq, now);
+                    osc2.frequency.setValueAtTime(freq * 1.003, now); // 轻微失谐增加厚度
+
+                    const shaper = audioCtx.createWaveShaper();
+                    shaper.curve = distortionCurve;
+                    shaper.oversample = '4x';
+
+                    // 吉他箱体模拟低通滤波
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(2600, now);
+                    filter.frequency.exponentialRampToValueAtTime(950, now + duration);
+                    filter.Q.value = 2.5;
+
+                    gainNode.gain.setValueAtTime(0.001, now);
+                    gainNode.gain.linearRampToValueAtTime(0.18, now + 0.015);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    osc1.connect(shaper);
+                    osc2.connect(shaper);
+                    shaper.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                } else {
+                    // 电子清音 (Clean)：明亮通透
+                    osc1.type = 'triangle';
+                    osc2.type = 'sine';
+                    osc1.frequency.setValueAtTime(freq, now);
+                    osc2.frequency.setValueAtTime(freq * 2, now); // 八度泛音
+
+                    const subGain = audioCtx.createGain();
+                    subGain.gain.value = 0.25;
+
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(3200, now);
+                    filter.frequency.exponentialRampToValueAtTime(700, now + duration);
+
+                    gainNode.gain.setValueAtTime(0.001, now);
+                    gainNode.gain.linearRampToValueAtTime(0.28, now + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    osc1.connect(filter);
+                    osc2.connect(subGain);
+                    subGain.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                }
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + duration + 0.05);
+                osc2.stop(now + duration + 0.05);
+            } catch (e) {
+                console.warn('Audio playback warning:', e);
+            }
+        }
+
+        // 播放电子底鼓/军鼓伴奏节拍
+        function playSynthDrum(isAccent = false) {
+            try {
+                ensureAudioContext();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(isAccent ? 130 : 95, now);
+                osc.frequency.exponentialRampToValueAtTime(32, now + 0.14);
+
+                gain.gain.setValueAtTime(isAccent ? 0.35 : 0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.17);
+            } catch (e) {}
+        }
+
+        function initAudioAndTest() {
+            // 弹奏一个帅气的 E5 强力和弦试音
+            const e5 = [{s: 6, f: 0}, {s: 5, f: 2}, {s: 4, f: 2}];
+            e5.forEach((n, idx) => {
+                const strObj = STRINGS.find(s => s.stringNum === n.s);
+                playGuitarNote(strObj.midi + n.f, 0.9, idx * 0.035);
+                animateString(n.s);
+            });
+        }
+
+        // ==========================================
+        // 4. 指板渲染与交互逻辑
+        // ==========================================
+        function getNoteInfo(stringNum, fret) {
+            const strObj = STRINGS.find(s => s.stringNum === stringNum);
+            const midi = strObj.midi + fret;
+            const noteIndex = midi % 12;
+            const noteName = NOTES[noteIndex];
+            const octave = Math.floor(midi / 12) - 1;
+            return { midi, noteIndex, noteName, octave, fullName: `${noteName}${octave}` };
+        }
+
+        function buildFretboardSkeleton() {
+            const headerRow = document.getElementById('fret-numbers-row');
+            const stringsContainer = document.getElementById('strings-container');
+            headerRow.innerHTML = '';
+            stringsContainer.innerHTML = '';
+
+            // 左侧弦号占位
+            const corner = document.createElement('div');
+            corner.className = 'w-16 shrink-0 py-2 px-2 text-center font-bold text-slate-500 border-r border-slate-800';
+            corner.textContent = '弦 / 品';
+            headerRow.appendChild(corner);
+
+            // 生成 0 - 24 品顶部编号
+            for (let f = 0; f <= FRET_COUNT; f++) {
+                const cell = document.createElement('div');
+                const isInlay = INLAY_FRETS.includes(f);
+                cell.className = `flex-1 py-2 text-center relative ${f === 0 ? 'w-14 shrink-0 bg-slate-900/90 text-cyber-cyan font-bold' : 'min-w-[38px]'} ${isInlay ? 'text-cyber-cyan font-bold' : ''}`;
+                cell.textContent = f === 0 ? '空弦' : f;
+                if (f === 12 || f === 24) {
+                    cell.innerHTML = `${f} <span class="text-[9px] text-cyber-pink">••</span>`;
+                } else if (isInlay) {
+                    cell.innerHTML = `${f} <span class="text-[9px] text-cyber-cyan/70">•</span>`;
+                }
+                headerRow.appendChild(cell);
+            }
+
+            // 生成 6 根琴弦行
+            STRINGS.forEach((strObj) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center relative h-11 border-b border-black/30 last:border-b-0';
+
+                // 左侧空弦标识
+                const label = document.createElement('div');
+                label.className = 'w-16 shrink-0 h-full flex flex-col items-center justify-center bg-cyber-bg/90 border-r border-slate-800 z-10';
+                label.innerHTML = `
+                    <span class="text-xs font-bold text-white">${strObj.stringNum}弦</span>
+                    <span class="text-[10px] font-mono text-slate-400">${strObj.name}${strObj.octave}</span>
+                `;
+                row.appendChild(label);
+
+                // 琴弦贯穿线
+                const stringLine = document.createElement('div');
+                stringLine.id = `string-line-${strObj.stringNum}`;
+                stringLine.className = `guitar-string absolute left-16 right-0 ${strObj.thickness} pointer-events-none z-10`;
+                row.appendChild(stringLine);
+
+                // 0 - 24 品格点击区域
+                for (let f = 0; f <= FRET_COUNT; f++) {
+                    const fretCell = document.createElement('div');
+                    fretCell.id = `cell-${strObj.stringNum}-${f}`;
+                    fretCell.onclick = () => handleFretClick(strObj.stringNum, f);
+                    
+                    const isNut = f === 0;
+                    fretCell.className = `h-full flex items-center justify-center relative cursor-pointer group z-20 ${
+                        isNut 
+                        ? 'w-14 shrink-0 bg-slate-900/60 border-r-4 border-slate-300' 
+                        : 'flex-1 min-w-[38px] border-r border-slate-600/60 hover:bg-white/5'
+                    }`;
+
+                    // 指板品记圆点装饰（仅在 3弦和4弦之间视觉背景显示）
+                    if (strObj.stringNum === 3 && INLAY_FRETS.includes(f)) {
+                        const dot = document.createElement('div');
+                        if (f === 12 || f === 24) {
+                            dot.className = 'absolute -bottom-1.5 flex gap-1 pointer-events-none opacity-35';
+                            dot.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-300"></span><span class="w-2 h-2 rounded-full bg-slate-300"></span>';
+                        } else {
+                            dot.className = 'absolute -bottom-1.5 w-2.5 h-2.5 rounded-full bg-slate-300/30 pointer-events-none';
+                        }
+                        fretCell.appendChild(dot);
+                    }
+
+                    // 音符圆标容器
+                    const badge = document.createElement('div');
+                    badge.id = `badge-${strObj.stringNum}-${f}`;
+                    badge.className = 'w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-mono font-bold transition-all duration-150 transform group-hover:scale-110';
+                    fretCell.appendChild(badge);
+
+                    row.appendChild(fretCell);
+                }
+
+                stringsContainer.appendChild(row);
+            });
+        }
+
+        function animateString(stringNum) {
+            const line = document.getElementById(`string-line-${stringNum}`);
+            if (!line) return;
+            line.classList.remove('string-vibrate');
+            void line.offsetWidth; // 触发重绘
+            line.classList.add('string-vibrate');
+        }
+
+        function pulseBadge(stringNum, fret) {
+            const badge = document.getElementById(`badge-${stringNum}-${fret}`);
+            if (!badge) return;
+            badge.classList.remove('note-pulse');
+            void badge.offsetWidth;
+            badge.classList.add('note-pulse');
+        }
+
+        // 刷新指板视觉状态
+        function renderFretboard() {
+            const scaleKey = document.getElementById('scale-select').value;
+            const scaleObj = SCALES[scaleKey];
+            const rootIndex = NOTES.indexOf(scaleObj.root);
+
+            // 更新提示文案
+            document.getElementById('scale-tip').innerHTML = scaleObj.tip;
+
+            STRINGS.forEach((strObj) => {
+                for (let f = 0; f <= FRET_COUNT; f++) {
+                    const badge = document.getElementById(`badge-${strObj.stringNum}-${f}`);
+                    const info = getNoteInfo(strObj.stringNum, f);
+                    
+                    // 重置样式
+                    badge.className = 'w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-mono font-bold transition-all duration-150 transform group-hover:scale-110';
+                    badge.textContent = '';
+
+                    if (currentMode === 'explore') {
+                        const interval = (info.noteIndex - rootIndex + 12) % 12;
+                        const scalePos = scaleObj.intervals.indexOf(interval);
+                        const isRoot = interval === 0;
+                        const isInScale = scalePos !== -1;
+
+                        if (isInScale) {
+                            if (isRoot) {
+                                badge.classList.add('bg-cyber-pink', 'text-white', 'shadow-lg', 'shadow-cyber-pink/50', 'ring-2', 'ring-white/60');
+                            } else {
+                                badge.classList.add('bg-cyber-cyan', 'text-slate-950', 'shadow-md', 'shadow-cyber-cyan/40');
+                            }
+
+                            if (labelMode === 'note') {
+                                badge.textContent = info.noteName;
+                            } else if (labelMode === 'degree') {
+                                badge.textContent = scaleObj.degrees[scalePos];
+                            } else {
+                                badge.textContent = isRoot ? 'R' : '•';
+                            }
+                        } else {
+                            // 音阶外音：鼠标悬停时隐约提示音名
+                            badge.classList.add('text-slate-500', 'opacity-0', 'group-hover:opacity-100', 'group-hover:bg-slate-800');
+                            badge.textContent = info.noteName;
+                        }
+                    } else if (currentMode === 'powerchord') {
+                        // 检查是否在当前激活的强力和弦中
+                        const hit = activePowerChord.find(item => item.s === strObj.stringNum && item.f === f);
+                        if (hit) {
+                            if (hit.role === 'root') {
+                                badge.classList.add('bg-cyber-pink', 'text-white', 'shadow-lg', 'shadow-cyber-pink/60', 'scale-110', 'ring-2', 'ring-white');
+                                badge.textContent = info.noteName;
+                            } else {
+                                badge.classList.add('bg-cyber-purple', 'text-white', 'shadow-lg', 'shadow-cyber-purple/60', 'scale-105');
+                                badge.textContent = hit.role === 'fifth' ? '5度' : '8度';
+                            }
+                        } else if (strObj.stringNum === 6 || strObj.stringNum === 5) {
+                            // 提示第 6 弦和第 5 弦可作为强力和弦根音点击
+                            badge.classList.add('bg-slate-800/80', 'text-slate-300', 'border', 'border-slate-600/60', 'opacity-80', 'group-hover:opacity-100', 'group-hover:border-cyber-cyan');
+                            badge.textContent = info.noteName;
+                        } else {
+                            badge.classList.add('text-slate-500', 'opacity-0', 'group-hover:opacity-90', 'group-hover:bg-slate-800');
+                            badge.textContent = info.noteName;
+                        }
+                    } else if (currentMode === 'quiz') {
+                        if (!currentQuiz) return;
+                        const isTarget = currentQuiz.s === strObj.stringNum && currentQuiz.f === f;
+                        if (isTarget) {
+                            badge.classList.add('bg-cyber-amber', 'text-black', 'shadow-lg', 'shadow-cyber-amber/70', 'scale-115', 'ring-2', 'ring-white', 'animate-bounce');
+                            badge.textContent = quizSubMode === 'identify' ? '?' : currentQuiz.noteName;
+                        } else {
+                            badge.classList.add('bg-slate-800/40', 'text-slate-500', 'opacity-0', 'group-hover:opacity-100', 'group-hover:bg-slate-700');
+                            badge.textContent = quizSubMode === 'power5' ? '+' : '';
+                        }
+                    }
+                }
+            });
+        }
+
+        // 处理用户点击指板
+        function handleFretClick(stringNum, fret) {
+            const info = getNoteInfo(stringNum, fret);
+            document.getElementById('last-played-badge').textContent = `${stringNum}弦 ${fret}品 → ${info.fullName}`;
+
+            if (currentMode === 'explore') {
+                playGuitarNote(info.midi, 1.3);
+                animateString(stringNum);
+                pulseBadge(stringNum, fret);
+            } else if (currentMode === 'powerchord') {
+                stopProgression();
+                triggerPowerChordAt(stringNum, fret);
+            } else if (currentMode === 'quiz') {
+                playGuitarNote(info.midi, 1.0);
+                animateString(stringNum);
+                if (quizSubMode === 'power5') {
+                    checkPower5Answer(stringNum, fret);
+                }
+            }
+        }
+
+        // ==========================================
+        // 5. 强力和弦 (Power Chord) 与进行演示逻辑
+        // ==========================================
+        function updatePowerChordTab() {
+            const pre = document.getElementById('powerchord-tab-preview');
+            if (!pre) return;
+            const lines = [1, 2, 3, 4, 5, 6].map(sNum => {
+                const name = ['e', 'B', 'G', 'D', 'A', 'E'][sNum - 1];
+                const hit = activePowerChord.find(x => x.s === sNum);
+                const val = hit ? String(hit.f).padStart(2, '-').padEnd(3, '-') : '---';
+                const suffix = sNum === 1 ? ' (1弦最细)' : (sNum === 6 ? ' (6弦最粗)' : '');
+                return `${name}|-${val}-|${suffix}`;
+            });
+            pre.textContent = lines.join('\n');
+        }
+
+        function triggerPowerChordAt(stringNum, fret) {
+            // 如果点在 1-4 弦，自动映射到同音名的 5 弦或 6 弦示范
+            let rootStr = stringNum;
+            if (rootStr < 5) {
+                rootStr = 5;
+            }
+            const rootInfo = getNoteInfo(rootStr, fret);
+            activePowerChord = [{ s: rootStr, f: fret, role: 'root' }];
+
+            // 6弦或5弦的强力和弦指型：往下一根弦 +2 品是五度音，再往下一根弦 +2 品是八度音
+            if (fret + 2 <= FRET_COUNT) {
+                activePowerChord.push({ s: rootStr - 1, f: fret + 2, role: 'fifth' });
+                activePowerChord.push({ s: rootStr - 2, f: fret + 2, role: 'octave' });
+            }
+
+            renderFretboard();
+            updatePowerChordTab();
+            document.getElementById('last-played-badge').textContent = `强力和弦 ${rootInfo.noteName}5 (${rootInfo.noteName} + 五度音)`;
+
+            // 模拟电吉他下扫扫弦音效
+            activePowerChord.forEach((n, idx) => {
+                const nInfo = getNoteInfo(n.s, n.f);
+                playGuitarNote(nInfo.midi, 1.4, idx * 0.03);
+                animateString(n.s);
+                pulseBadge(n.s, n.f);
+            });
+        }
+
+        function updateBpm(val) {
+            bpm = parseInt(val, 10);
+            document.getElementById('bpm-val').textContent = `${bpm} BPM`;
+            if (currentProgIndex !== -1) {
+                const activeIdx = currentProgIndex;
+                stopProgression();
+                toggleProgression(activeIdx);
+            }
+        }
+
+        function toggleProgression(idx) {
+            if (currentProgIndex === idx) {
+                stopProgression();
+                return;
+            }
+            stopProgression();
+            currentProgIndex = idx;
+            currentStepIndex = 0;
+
+            // 高亮按钮
+            document.querySelectorAll('.prog-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.classList.add('border-cyber-purple', 'bg-cyber-purple/15');
+                    btn.querySelector('.play-icon').textContent = '⏸';
+                } else {
+                    btn.classList.remove('border-cyber-purple', 'bg-cyber-purple/15');
+                    btn.querySelector('.play-icon').textContent = '▶';
+                }
+            });
+
+            const bar = document.getElementById('now-playing-bar');
+            bar.classList.remove('hidden');
+            bar.classList.add('flex');
+
+            const stepIntervalMs = (60 / bpm) * 1000 * 2; // 每个和弦占 2 拍
+
+            const playStep = () => {
+                const prog = PROGRESSIONS[currentProgIndex];
+                const step = prog.steps[currentStepIndex];
+
+                document.getElementById('current-chord-display').textContent = step.label;
+                activePowerChord = step.notes.map((n, i) => ({
+                    s: n.s,
+                    f: n.f,
+                    role: i === 0 ? 'root' : (i === 1 ? 'fifth' : 'octave')
+                }));
+                renderFretboard();
+                updatePowerChordTab();
+
+                // 电子鼓点 + 强力和弦齐奏
+                playSynthDrum(currentStepIndex === 0);
+                step.notes.forEach((n, i) => {
+                    const info = getNoteInfo(n.s, n.f);
+                    playGuitarNote(info.midi, (stepIntervalMs / 1000) * 0.92, i * 0.02);
+                    animateString(n.s);
+                    pulseBadge(n.s, n.f);
+                });
+
+                currentStepIndex = (currentStepIndex + 1) % prog.steps.length;
+            };
+
+            playStep();
+            progTimer = setInterval(playStep, stepIntervalMs);
+        }
+
+        function stopProgression() {
+            if (progTimer) {
+                clearInterval(progTimer);
+                progTimer = null;
+            }
+            currentProgIndex = -1;
+            document.querySelectorAll('.prog-btn').forEach((btn) => {
+                btn.classList.remove('border-cyber-purple', 'bg-cyber-purple/15');
+                btn.querySelector('.play-icon').textContent = '▶';
+            });
+            const bar = document.getElementById('now-playing-bar');
+            bar.classList.add('hidden');
+            bar.classList.remove('flex');
+        }
+
+        // ==========================================
+        // 6. 每日 5 分钟指板认音小测验
+        // ==========================================
+        function buildQuizOptionButtons() {
+            const container = document.getElementById('quiz-options-grid');
+            container.innerHTML = '';
+            NOTES.forEach(note => {
+                const btn = document.createElement('button');
+                btn.textContent = note;
+                btn.onclick = () => checkIdentifyAnswer(note);
+                btn.className = 'py-2.5 rounded-xl bg-cyber-bg hover:bg-cyber-amber hover:text-black border border-slate-700 font-mono text-xs font-bold text-slate-200 transition-all active:scale-95';
+                container.appendChild(btn);
+            });
+        }
+
+        function setQuizSubMode(sub) {
+            quizSubMode = sub;
+            const btnA = document.getElementById('qsub-identify');
+            const btnB = document.getElementById('qsub-power5');
+            const optGrid = document.getElementById('quiz-options-grid');
+
+            if (sub === 'identify') {
+                btnA.className = 'px-2.5 py-1 rounded-md bg-cyber-amber text-black font-bold';
+                btnB.className = 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white';
+                optGrid.classList.remove('hidden');
+            } else {
+                btnB.className = 'px-2.5 py-1 rounded-md bg-cyber-amber text-black font-bold';
+                btnA.className = 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white';
+                optGrid.classList.add('hidden');
+            }
+            nextQuizQuestion();
+        }
+
+        function nextQuizQuestion() {
+            document.getElementById('quiz-feedback').textContent = '';
+            if (quizSubMode === 'identify') {
+                // 重点考察实用的 6弦、5弦、4弦 前 12 品
+                const s = [6, 5, 4][Math.floor(Math.random() * 3)];
+                const f = Math.floor(Math.random() * 13); // 0 - 12 品
+                const info = getNoteInfo(s, f);
+                currentQuiz = { s, f, ...info };
+                document.getElementById('quiz-prompt').innerHTML = 
+                    `请看指板高亮位置：<span class="text-cyber-amber">第 ${s} 弦 第 ${f} 品</span> 是什么音名？（提示：可先点一下琴弦听音高）`;
+                playGuitarNote(info.midi, 0.9);
+            } else {
+                // 考察强力和弦五度音位置：在 6 弦或 5 弦 0-10 品生成根音
+                const s = [6, 5][Math.floor(Math.random() * 2)];
+                const f = Math.floor(Math.random() * 11);
+                const info = getNoteInfo(s, f);
+                currentQuiz = { s, f, ...info, targetS: s - 1, targetF: f + 2 };
+                document.getElementById('quiz-prompt').innerHTML = 
+                    `根音在 <span class="text-cyber-amber">${s}弦 ${f}品 (${info.noteName})</span>，请直接在指板上点击它的<strong>“五度音”</strong>组成 ${info.noteName}5 强力和弦！`;
+                playGuitarNote(info.midi, 0.9);
+            }
+            renderFretboard();
+        }
+
+        function checkIdentifyAnswer(selectedNote) {
+            if (!currentQuiz) return;
+            const fb = document.getElementById('quiz-feedback');
+            if (selectedNote === currentQuiz.noteName) {
+                quizScore += 10;
+                quizStreak += 1;
+                fb.innerHTML = `<span class="text-emerald-400">✅ 回答正确！${currentQuiz.s}弦 ${currentQuiz.f}品 就是 ${currentQuiz.fullName}。</span>`;
+                playGuitarNote(currentQuiz.midi, 0.8);
+                setTimeout(nextQuizQuestion, 900);
+            } else {
+                quizStreak = 0;
+                fb.innerHTML = `<span class="text-rose-400">❌ 再算一算：${currentQuiz.s}弦空弦是 ${STRINGS.find(x=>x.stringNum===currentQuiz.s).name}，往右数 ${currentQuiz.f} 个半音试试（注意 E-F 和 B-C 之间无升号）。</span>`;
+            }
+            updateScoreUI();
+        }
+
+        function checkPower5Answer(clickedS, clickedF) {
+            if (!currentQuiz) return;
+            const fb = document.getElementById('quiz-feedback');
+            if (clickedS === currentQuiz.targetS && clickedF === currentQuiz.targetF) {
+                quizScore += 15;
+                quizStreak += 1;
+                fb.innerHTML = `<span class="text-emerald-400">🔥 完美！往下一根弦右移两品（${clickedS}弦 ${clickedF}品），强力和弦 ${currentQuiz.noteName}5 成立！</span>`;
+                // 齐奏强力和弦奖励音效
+                playGuitarNote(currentQuiz.midi, 1.0, 0);
+                playGuitarNote(getNoteInfo(clickedS, clickedF).midi, 1.0, 0.04);
+                setTimeout(nextQuizQuestion, 1100);
+            } else {
+                quizStreak = 0;
+                fb.innerHTML = `<span class="text-rose-400">❌ 位置差一点：记住口诀“往下一根弦（更细一格），再往右数 2 品”。</span>`;
+            }
+            updateScoreUI();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('quiz-score').textContent = quizScore;
+            document.getElementById('quiz-streak').textContent = quizStreak;
+        }
+
+        // ==========================================
+        // 7. 导航与模式切换控制
+        // ==========================================
+        function switchMode(mode) {
+            currentMode = mode;
+            stopProgression();
+
+            // 切换顶部卡片高亮
+            ['explore', 'powerchord', 'quiz'].forEach(m => {
+                const tab = document.getElementById(`tab-${m}`);
+                const panel = document.getElementById(`panel-${m}`);
+                if (m === mode) {
+                    panel.classList.remove('hidden');
+                    tab.classList.remove('border-cyber-border', 'bg-cyber-card');
+                    if (m === 'explore') tab.classList.add('border-cyber-cyan', 'bg-cyber-cyan/10');
+                    if (m === 'powerchord') tab.classList.add('border-cyber-purple', 'bg-cyber-purple/10');
+                    if (m === 'quiz') tab.classList.add('border-cyber-amber', 'bg-cyber-amber/10');
+                } else {
+                    panel.classList.add('hidden');
+                    tab.className = 'mode-tab p-3.5 rounded-2xl border border-cyber-border bg-cyber-card hover:border-slate-600 text-left transition-all';
+                }
+            });
+
+            if (mode === 'powerchord' && activePowerChord.length === 0) {
+                // 默认展示经典的 E5 强力和弦
+                activePowerChord = [
+                    { s: 6, f: 0, role: 'root' },
+                    { s: 5, f: 2, role: 'fifth' },
+                    { s: 4, f: 2, role: 'octave' }
+                ];
+                updatePowerChordTab();
+            } else if (mode === 'powerchord') {
+                updatePowerChordTab();
+            } else if (mode === 'quiz') {
+                nextQuizQuestion();
+            }
+
+            renderFretboard();
+        }
+
+        // ==========================================
+        // 8. 新手增强工具：引导、0-12品视图、电子鼓机、调音参考、音阶示范
+        // ==========================================
+        function toggleGuide() {
+            const guide = document.getElementById('beginner-guide');
+            guide.classList.toggle('hidden');
+        }
+
+        function setFretRange(maxFret) {
+            FRET_COUNT = maxFret;
+            const btn12 = document.getElementById('range-12-btn');
+            const btn24 = document.getElementById('range-24-btn');
+            const wrapper = document.getElementById('fretboard-wrapper');
+
+            if (maxFret === 12) {
+                btn12.className = 'px-2.5 py-1 rounded-md bg-cyber-cyan text-black font-bold';
+                btn24.className = 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white';
+                wrapper.classList.remove('min-w-[1050px]');
+                wrapper.classList.add('min-w-[680px]');
+            } else {
+                btn24.className = 'px-2.5 py-1 rounded-md bg-cyber-cyan text-black font-bold';
+                btn12.className = 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white';
+                wrapper.classList.remove('min-w-[680px]');
+                wrapper.classList.add('min-w-[1050px]');
+            }
+            buildFretboardSkeleton();
+            renderFretboard();
+        }
+
+        // 独立电子鼓机 (Kick + Snare + Hi-Hat 4/4 摇滚律动)
+        function playRockDrumBeat(beatIdx) {
+            try {
+                ensureAudioContext();
+                const now = audioCtx.currentTime;
+
+                // 1 & 3 拍底鼓 (Kick)
+                if (beatIdx === 0 || beatIdx === 2) {
+                    const osc = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(beatIdx === 0 ? 140 : 120, now);
+                    osc.frequency.exponentialRampToValueAtTime(36, now + 0.14);
+                    g.gain.setValueAtTime(beatIdx === 0 ? 0.45 : 0.35, now);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                    osc.connect(g);
+                    g.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.17);
+                } else {
+                    // 2 & 4 拍军鼓 (Snare: 噪声 + 短正弦)
+                    const bufferSize = audioCtx.sampleRate * 0.12;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'highpass';
+                    filter.frequency.value = 900;
+                    const g = audioCtx.createGain();
+                    g.gain.setValueAtTime(0.22, now);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    noise.connect(filter);
+                    filter.connect(g);
+                    g.connect(audioCtx.destination);
+                    noise.start(now);
+                }
+
+                // 视觉拍点指示灯
+                for (let i = 0; i < 4; i++) {
+                    const dot = document.getElementById(`beat-dot-${i}`);
+                    if (!dot) continue;
+                    if (i === beatIdx) {
+                        dot.className = i === 0
+                            ? 'w-3 h-3 rounded-full bg-cyber-pink shadow shadow-cyber-pink scale-110 transition-all'
+                            : 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow shadow-emerald-400 transition-all';
+                    } else {
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-700 transition-all';
+                    }
+                }
+            } catch (e) {}
+        }
+
+        function toggleDrumMetronome() {
+            const btn = document.getElementById('drum-toggle-btn');
+            const icon = document.getElementById('drum-btn-icon');
+            const text = document.getElementById('drum-btn-text');
+
+            if (drumTimer) {
+                clearInterval(drumTimer);
+                drumTimer = null;
+                btn.className = 'px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center gap-2 transition-all';
+                icon.textContent = '▶';
+                text.textContent = '开启电子鼓节拍器';
+                for (let i = 0; i < 4; i++) {
+                    const dot = document.getElementById(`beat-dot-${i}`);
+                    if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-700 transition-all';
+                }
+                return;
+            }
+
+            drumBeatIndex = 0;
+            btn.className = 'px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-300 text-xs font-bold flex items-center gap-2 transition-all';
+            icon.textContent = '⏹';
+            text.textContent = '停止电子鼓节拍器';
+
+            const intervalMs = (60 / drumBpm) * 1000;
+            const tick = () => {
+                playRockDrumBeat(drumBeatIndex);
+                drumBeatIndex = (drumBeatIndex + 1) % 4;
+            };
+            tick();
+            drumTimer = setInterval(tick, intervalMs);
+        }
+
+        function updateDrumBpm(val) {
+            drumBpm = parseInt(val, 10);
+            document.getElementById('drum-bpm-val').textContent = `${drumBpm} BPM`;
+            if (drumTimer) {
+                toggleDrumMetronome();
+                toggleDrumMetronome();
+            }
+        }
+
+        // 标准调音参考音
+        function playTunerRef(stringNum, midi, label) {
+            const prevTone = toneMode;
+            toneMode = 'clean';
+            playGuitarNote(midi, 2.2, 0);
+            toneMode = prevTone;
+            animateString(stringNum);
+            pulseBadge(stringNum, 0);
+            document.getElementById('last-played-badge').textContent = `调音参考：${label}`;
+        }
+
+        // 模式 01：顺序示范当前音阶（实用 0-8 品范围从低到高弹一遍）
+        function playScaleDemo() {
+            scaleDemoTimers.forEach(t => clearTimeout(t));
+            scaleDemoTimers = [];
+
+            const scaleKey = document.getElementById('scale-select').value;
+            const scaleObj = SCALES[scaleKey];
+            const rootIndex = NOTES.indexOf(scaleObj.root);
+
+            // 根据音阶决定最实用的示范品格区间（Am 五声音阶用 5-8 品盒子，其他用 0-5 品）
+            const minFret = scaleKey.startsWith('A') ? 5 : 0;
+            const maxFret = scaleKey.startsWith('A') ? 8 : 5;
+
+            const demoNotes = [];
+            // 从 6 弦到 1 弦依次收集音阶内音
+            [6, 5, 4, 3, 2, 1].forEach(sNum => {
+                for (let f = minFret; f <= maxFret; f++) {
+                    const info = getNoteInfo(sNum, f);
+                    const interval = (info.noteIndex - rootIndex + 12) % 12;
+                    if (scaleObj.intervals.includes(interval)) {
+                        demoNotes.push({ s: sNum, f, midi: info.midi, fullName: info.fullName });
+                    }
+                }
+            });
+
+            demoNotes.forEach((n, idx) => {
+                const timer = setTimeout(() => {
+                    playGuitarNote(n.midi, 0.55, 0);
+                    animateString(n.s);
+                    pulseBadge(n.s, n.f);
+                    document.getElementById('last-played-badge').textContent = `示范：${n.s}弦 ${n.f}品 (${n.fullName})`;
+                }, idx * 280);
+                scaleDemoTimers.push(timer);
+            });
+        }
+
+        function setToneMode(mode) {
+            toneMode = mode;
+            const btnClean = document.getElementById('tone-clean');
+            const btnOd = document.getElementById('tone-overdrive');
+            if (mode === 'clean') {
+                btnClean.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-cyber-cyan text-black shadow-md shadow-cyber-cyan/30';
+                btnOd.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white';
+            } else {
+                btnOd.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-cyber-purple to-cyber-pink text-white shadow-md shadow-cyber-purple/30';
+                btnClean.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white';
+            }
+        }
+
+        function setLabelMode(mode) {
+            labelMode = mode;
+            ['note', 'degree', 'dot'].forEach(m => {
+                const btn = document.getElementById(`lbl-${m}`);
+                if (m === mode) {
+                    btn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyber-cyan text-black';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white';
+                }
+            });
+            renderFretboard();
+        }
+
+        // 支持键盘数字键 1-6 拨响对应空弦，方便单手盲操
+        window.addEventListener('keydown', (e) => {
+            if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+                const sNum = parseInt(e.key, 10);
+                handleFretClick(sNum, 0);
+            }
+        });
+
+        // 初始化页面
+        window.addEventListener('DOMContentLoaded', () => {
+            buildFretboardSkeleton();
+            buildQuizOptionButtons();
+            renderFretboard();
+        });
+    </script>
+</body>
+</html>
