@@ -1927,16 +1927,26 @@ E|--0--|  (6弦最粗)</pre>
         }
 
         function loadAiConfig() {
+            const defaultBase = window.location.protocol.startsWith('http')
+                ? `${window.location.origin}/api/v1`
+                : 'https://sub2api.guangze-song.top/v1';
+            const defaultKey = 'sk-709b53e00cc2e0e3128ea43402b09d74c0923df720fe7b8e43ebfa06f497089c';
+            const defaultModel = 'gemini-4-argon';
             try {
                 const raw = localStorage.getItem(AI_STORAGE_KEY);
-                const cfg = raw ? JSON.parse(raw) : {};
-                document.getElementById('ai-base-url').value = cfg.baseUrl || 'https://api.openai.com/v1';
-                document.getElementById('ai-api-key').value = cfg.apiKey || '';
-                document.getElementById('ai-model-name').value = cfg.model || 'gpt-4o-mini';
+                const saved = raw ? JSON.parse(raw) : {};
+                const cfg = {
+                    baseUrl: saved.baseUrl || defaultBase,
+                    apiKey: saved.apiKey || defaultKey,
+                    model: saved.model || defaultModel
+                };
+                document.getElementById('ai-base-url').value = cfg.baseUrl;
+                document.getElementById('ai-api-key').value = cfg.apiKey;
+                document.getElementById('ai-model-name').value = cfg.model;
                 updateAiStatusUI(cfg);
                 return cfg;
             } catch (e) {
-                return {};
+                return { baseUrl: defaultBase, apiKey: defaultKey, model: defaultModel };
             }
         }
 
