@@ -126,6 +126,10 @@
                 <button onclick="toggleGuide()" id="guide-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-cyber-amber/15 hover:bg-cyber-amber/25 text-cyber-amber text-xs font-semibold border border-cyber-amber/40">
                     ❓ 新手指南
                 </button>
+                <button onclick="scrollToAiTutor()" class="px-2.5 py-1.5 rounded-lg bg-cyber-purple/20 hover:bg-cyber-purple/30 text-white text-xs font-semibold border border-cyber-purple/50 flex items-center gap-1.5">
+                    <span id="ai-status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    <span>🤖 AI 助教</span>
+                </button>
             </div>
         </div>
     </header>
@@ -462,6 +466,81 @@ E|--0--|  (6弦最粗)</pre>
                 <p class="text-xs text-slate-300 leading-relaxed">
                     每天花 3–5 分钟在“模式 03”里盲猜<strong>第 6 弦和第 5 弦前 12 品的音名</strong>。只要把这两根最粗的低音弦认熟，拿到琴后你就能立刻在指板上找到任何一首摇滚歌曲的强力和弦位置。
                 </p>
+            </div>
+        </section>
+
+        <!-- 实时 AI 吉他助教与监督面板 (OpenAI 兼容接口) -->
+        <section id="ai-tutor-section" class="bg-cyber-card border border-cyber-purple/40 rounded-2xl p-4 md:p-5 shadow-2xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-cyber-purple/20 border border-cyber-purple/40 flex items-center justify-center text-base">🤖</span>
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            实时 AI 电吉他私教与练习监督
+                            <span id="ai-config-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">未配置 API</span>
+                        </h2>
+                        <p class="text-[11px] text-slate-400">自动读取你当前的音阶、强力和弦、测验得分与鼓机 BPM，随时讲解或监督练习（Key 仅存于本地浏览器）</p>
+                    </div>
+                </div>
+                <button onclick="toggleAiSettings()" class="px-3 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 font-medium">
+                    ⚙ 配置 Base URL / API Key
+                </button>
+            </div>
+
+            <!-- API 配置面板（可折叠） -->
+            <div id="ai-settings-panel" class="hidden bg-cyber-bg/90 border border-slate-800 rounded-xl p-4 space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">Base URL (OpenAI 兼容)</label>
+                        <input id="ai-base-url" type="text" placeholder="https://api.openai.com/v1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">API Key (仅存本地 localStorage)</label>
+                        <input id="ai-api-key" type="password" placeholder="sk-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">模型名称 (Model ID)</label>
+                        <input id="ai-model-name" type="text" placeholder="gpt-4o-mini / deepseek-chat / claude-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <span class="text-[11px] text-slate-500">🔒 密钥仅保存在你当前浏览器的 localStorage 中，直接由浏览器请求你填写的 Base URL，不经过任何第三方中转。</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="clearAiConfig()" class="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs">清除配置</button>
+                        <button onclick="saveAiConfig()" class="px-4 py-1.5 rounded-lg bg-cyber-cyan text-black font-bold text-xs hover:opacity-90">保存配置</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快捷场景触发按钮 -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="askAiPreset('explain_current')" class="px-3 py-1.5 rounded-xl bg-cyber-cyan/10 hover:bg-cyber-cyan/20 border border-cyber-cyan/40 text-cyber-cyan text-xs font-medium transition-all">
+                    💡 用大白话讲讲当前画面怎么弹
+                </button>
+                <button onclick="askAiPreset('today_plan')" class="px-3 py-1.5 rounded-xl bg-cyber-purple/15 hover:bg-cyber-purple/25 border border-cyber-purple/40 text-purple-300 text-xs font-medium transition-all">
+                    ⏱️ 下班只有20分钟，给我安排今天练什么
+                </button>
+                <button onclick="askAiPreset('review_quiz')" class="px-3 py-1.5 rounded-xl bg-cyber-amber/15 hover:bg-cyber-amber/25 border border-cyber-amber/40 text-cyber-amber text-xs font-medium transition-all">
+                    🎯 根据我刚才的认音表现点评一下
+                </button>
+                <button onclick="askAiPreset('gear_check')" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-medium transition-all">
+                    🎸 帮我出个1500元内二手选琴/防踩坑小测
+                </button>
+            </div>
+
+            <!-- 对话记录区 -->
+            <div id="ai-chat-box" class="bg-cyber-bg border border-slate-800 rounded-xl p-3.5 h-60 overflow-y-auto space-y-3 text-xs leading-relaxed">
+                <div class="text-slate-400">
+                    👋 你好！我是你的实时电吉他 AI 助教。配置好右上角的 <strong class="text-slate-200">Base URL 和 API Key</strong> 后，你可以随时点上面的快捷按钮，或者直接输入你的困惑（例如：“手腕有点酸怎么调整？”、“这个强力和弦右手怎么消音？”）。
+                </div>
+            </div>
+
+            <!-- 输入框 -->
+            <div class="flex gap-2">
+                <input id="ai-user-input" type="text" onkeydown="if(event.key==='Enter') sendAiMessage()" placeholder="输入你的问题，或汇报今天练了什么（按 Enter 发送）..." class="flex-1 bg-cyber-bg border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyber-purple">
+                <button id="ai-send-btn" onclick="sendAiMessage()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-pink text-white font-bold text-xs hover:opacity-90 transition-all shrink-0">
+                    发送提问
+                </button>
             </div>
         </section>
 
@@ -1401,19 +1480,202 @@ E|--0--|  (6弦最粗)</pre>
             renderFretboard();
         }
 
-        // 支持键盘数字键 1-6 拨响对应空弦，方便单手盲操
+        // 支持键盘数字键 1-6 拨响对应空弦（输入法/输入框聚焦时不触发）
         window.addEventListener('keydown', (e) => {
+            if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                return;
+            }
             if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
                 const sNum = parseInt(e.key, 10);
                 handleFretClick(sNum, 0);
             }
         });
 
+        // ==========================================
+        // 9. 实时 LLM 私教请求与状态监督 (OpenAI 兼容格式)
+        // ==========================================
+        const AI_STORAGE_KEY = 'cyberfret_ai_config_v1';
+        let aiHistory = [];
+
+        function scrollToAiTutor() {
+            document.getElementById('ai-tutor-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAiSettings() {
+            document.getElementById('ai-settings-panel').classList.toggle('hidden');
+        }
+
+        function loadAiConfig() {
+            try {
+                const raw = localStorage.getItem(AI_STORAGE_KEY);
+                const cfg = raw ? JSON.parse(raw) : {};
+                document.getElementById('ai-base-url').value = cfg.baseUrl || 'https://api.openai.com/v1';
+                document.getElementById('ai-api-key').value = cfg.apiKey || '';
+                document.getElementById('ai-model-name').value = cfg.model || 'gpt-4o-mini';
+                updateAiStatusUI(cfg);
+                return cfg;
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveAiConfig() {
+            const baseUrl = document.getElementById('ai-base-url').value.trim().replace(/\/+$/, '');
+            const apiKey = document.getElementById('ai-api-key').value.trim();
+            const model = document.getElementById('ai-model-name').value.trim() || 'gpt-4o-mini';
+            const cfg = { baseUrl, apiKey, model };
+            localStorage.setItem(AI_STORAGE_KEY, JSON.stringify(cfg));
+            updateAiStatusUI(cfg);
+            document.getElementById('ai-settings-panel').classList.add('hidden');
+            appendAiChat('system', `✅ 已保存配置：${model} @ ${baseUrl || '未填URL'}`);
+        }
+
+        function clearAiConfig() {
+            localStorage.removeItem(AI_STORAGE_KEY);
+            document.getElementById('ai-api-key').value = '';
+            updateAiStatusUI({});
+            appendAiChat('system', '🗑️ 已清除本地保存的 API 配置。');
+        }
+
+        function updateAiStatusUI(cfg) {
+            const dot = document.getElementById('ai-status-dot');
+            const badge = document.getElementById('ai-config-badge');
+            if (cfg && cfg.baseUrl && cfg.apiKey) {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow shadow-emerald-400';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono';
+                badge.textContent = `已就绪: ${cfg.model || 'custom'}`;
+            } else {
+                dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                badge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono';
+                badge.textContent = '未配置 API';
+            }
+        }
+
+        function getLivePracticeContext() {
+            const scaleSelect = document.getElementById('scale-select');
+            const scaleLabel = scaleSelect.options[scaleSelect.selectedIndex]?.text || '';
+            const lastPlayed = document.getElementById('last-played-badge')?.textContent || '';
+            const chordInfo = activePowerChord.length
+                ? activePowerChord.map(n => `${n.s}弦${n.f}品(${n.role})`).join(', ')
+                : '无';
+
+            return [
+                `当前页面模式: ${currentMode} (explore=音阶探索, powerchord=强力和弦实战, quiz=认音挑战)`,
+                `吉他音色: ${toneMode}`,
+                `指板显示范围: 0-${FRET_COUNT}品`,
+                `当前选中音阶: ${scaleLabel}`,
+                `当前激活强力和弦: ${chordInfo}`,
+                `电子鼓机状态: ${drumTimer ? '运行中' : '未开启'}, 速度 ${drumBpm} BPM`,
+                `认音测验战绩: 总分 ${quizScore}, 当前连对 ${quizStreak}`,
+                `最近一次点击/提示: ${lastPlayed}`
+            ].join('\n');
+        }
+
+        function appendAiChat(role, text) {
+            const box = document.getElementById('ai-chat-box');
+            const item = document.createElement('div');
+            if (role === 'user') {
+                item.className = 'bg-cyber-purple/15 border border-cyber-purple/30 rounded-xl p-2.5 text-slate-100 ml-6';
+                item.innerHTML = `<div class="text-[10px] text-cyber-purple font-bold mb-1">🧑 你</div><div class="whitespace-pre-wrap"></div>`;
+                item.querySelector('div:last-child').textContent = text;
+            } else if (role === 'assistant') {
+                item.className = 'bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 text-slate-200 mr-6';
+                item.innerHTML = `<div class="text-[10px] text-cyber-cyan font-bold mb-1">🤖 AI 吉他私教</div><div class="whitespace-pre-wrap"></div>`;
+                item.querySelector('div:last-child').textContent = text;
+            } else {
+                item.className = 'text-[11px] text-slate-400 italic px-1';
+                item.textContent = text;
+            }
+            box.appendChild(item);
+            box.scrollTop = box.scrollHeight;
+            return item;
+        }
+
+        function askAiPreset(preset) {
+            const prompts = {
+                explain_current: '请结合我现在网页上的当前状态（模式/音阶/和弦/BPM），用零基础听得懂的大白话，告诉我这东西听起来像什么、左手大概怎么按、以及我现在可以怎么点着玩或练？',
+                today_plan: '我今天下班比较晚，只有 20 分钟戴耳机练琴时间，请结合我当前的进度和 85 BPM 左右的节奏，帮我拆一个不枯燥、带摇滚或电子律动感的 20 分钟练习清单（热身+技巧+爽感Riff）。',
+                review_quiz: '请看看我刚才在模式 03 认音挑战里的得分和连对数，点评一下我现在的指板熟悉度，并告诉我接下来重点记哪几根弦/哪几个品格最划算？',
+                gear_check: '我现在预算 1500 元以下收二手电吉他，准备用耳机静音练摇滚和电子。请给我出 2 道很短的选择题或情景题，考考我面交验琴时能不能避开坑。'
+            };
+            document.getElementById('ai-user-input').value = prompts[preset] || '';
+            sendAiMessage();
+        }
+
+        async function sendAiMessage() {
+            const input = document.getElementById('ai-user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const cfg = loadAiConfig();
+            if (!cfg.baseUrl || !cfg.apiKey) {
+                document.getElementById('ai-settings-panel').classList.remove('hidden');
+                appendAiChat('system', '⚠️ 请先在上方填写 Base URL 和 API Key 并点击「保存配置」。');
+                return;
+            }
+
+            input.value = '';
+            appendAiChat('user', text);
+
+            const sendBtn = document.getElementById('ai-send-btn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = '思考中...';
+
+            const loadingEl = appendAiChat('assistant', '正在结合你当前的指板与练习状态分析...');
+
+            const systemPrompt = [
+                '你是一位专门辅导「36岁成人零基础、下班晚、每日15-30分钟、耳机静音练琴、喜欢摇滚+电子乐+低音律动」的电吉他私教与练习监督员。',
+                '你的说话风格：大白话、鼓励但不吹嘘、极其务实、注重护弦消音和手腕防劳损。',
+                '请结合下面学习者此刻在 CyberFret 网页工具中的实时状态来回答（如果对方在汇报练习或打卡，请给出点评和下一步具体 BPM 目标）：',
+                '--- 实时状态 ---',
+                getLivePracticeContext()
+            ].join('\n');
+
+            aiHistory.push({ role: 'user', content: text });
+            const recentHistory = aiHistory.slice(-8);
+
+            try {
+                const endpoint = `${cfg.baseUrl.replace(/\/+$/, '')}/chat/completions`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${cfg.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: cfg.model || 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            ...recentHistory
+                        ],
+                        temperature: 0.7
+                    })
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
+                }
+
+                const data = await res.json();
+                const reply = data?.choices?.[0]?.message?.content || '（接口返回为空，请检查模型名是否正确）';
+                aiHistory.push({ role: 'assistant', content: reply });
+                loadingEl.querySelector('div:last-child').textContent = reply;
+            } catch (err) {
+                loadingEl.querySelector('div:last-child').textContent =
+                    `❌ 请求失败：${err.message}\n常见原因：Base URL 末尾路径不对（通常应以 /v1 结尾）、Key 无效、模型名不匹配，或该接口在本地 file:// 打开时受浏览器 CORS 跨域限制（可改用支持 CORS 的中转/本地服务，或用 python -m http.server 启动本地网页）。`;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = '发送提问';
+            }
+        }
+
         // 初始化页面
         window.addEventListener('DOMContentLoaded', () => {
             buildFretboardSkeleton();
             buildQuizOptionButtons();
             renderFretboard();
+            loadAiConfig();
         });
     </script>
 </body>
