@@ -16,6 +16,7 @@ import webbrowser
 
 PORT = int(os.environ.get("CYBERFRET_PORT", "8080"))
 UPSTREAM_BASE = os.environ.get("CYBERFRET_UPSTREAM", "https://sub2api.guangze-song.top").rstrip("/")
+TTS_UPSTREAM = os.environ.get("CYBERFRET_TTS_UPSTREAM", "http://10.10.0.40:38000").rstrip("/")
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SSL_CTX = ssl.create_default_context()
@@ -46,12 +47,31 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/api/"):
             self._proxy_request("GET")
+        elif self.path.startswith("/tts/"):
+            self._proxy_tts("GET")
         elif self.path == "/":
             self.send_response(302)
             self.send_header("Location", "/code_artifact.html")
             self.end_headers()
         else:
             super().do_GET()
+
+    def _proxy_tts(self, method: str):
+        target_path = self.path[len("/tts"):]  # e.g. /generate?text=...
+        target_url = f"{TTS_UPSTREAM}{target_path}"
+        req = urllib.request.Request(target_url, method=method)
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                resp_body = resp.read()
+                self.send_response(resp.status)
+                self.send_header("Content-Type", resp.headers.get("Content-Type", "audio/wav"))
+                self.end_headers()
+                self.wfile.write(resp_body)
+        except Exception as e:
+            self.send_response(502)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(f'{{"error":{{"message":"TTS proxy error: {e}"}}}}'.encode("utf-8"))
 
     def _proxy_request(self, method: str):
         target_path = self.path[len("/api"):]  # e.g. /v1/chat/completions

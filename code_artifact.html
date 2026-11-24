@@ -656,11 +656,25 @@ E|--0--|  (6弦最粗)</pre>
                         <input id="ai-model-name" type="text" placeholder="gpt-4o-mini / deepseek-chat / claude-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                     <span class="text-[11px] text-slate-500">🔒 密钥仅保存在本地浏览器 localStorage，直连你的 Base URL。</span>
                     <div class="flex items-center gap-2">
                         <button onclick="clearAiConfig()" class="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs">清除配置</button>
                         <button onclick="saveAiConfig()" class="px-4 py-1.5 rounded-lg bg-cyber-cyan text-black font-bold text-xs hover:opacity-90">保存配置</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-slate-800/80">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">本地真人语音 TTS 服务 (Qwen3-TTS / OpenAI 兼容)</label>
+                        <input id="ai-tts-url" type="text" placeholder="http://10.10.0.40:38000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">音色 (Speaker)</label>
+                        <input id="ai-tts-speaker" type="text" placeholder="Vivian / Ryan / Seraphina" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">语气指令 (Instruct，可选)</label>
+                        <input id="ai-tts-instruct" type="text" placeholder="用温柔耐心的电吉他老师口吻" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyber-cyan">
                     </div>
                 </div>
             </div>
@@ -1901,11 +1915,45 @@ E|--0--|  (6弦最粗)</pre>
             speechRecognition.start();
         }
 
-        function speakText(text) {
+        let currentTtsAudio = null;
+
+        async function speakText(text) {
             const toggle = document.getElementById('ai-tts-toggle');
-            if (!toggle || !toggle.checked || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-            const clean = text.replace(/[#*`>]/g, '').slice(0, 300);
+            if (!toggle || !toggle.checked) return;
+            stopSpeaking();
+            const clean = text.replace(/[#*`>]/g, '').trim().slice(0, 300);
+            if (!clean) return;
+
+            const cfg = loadAiConfig();
+            if (cfg.ttsUrl) {
+                try {
+                    const params = new URLSearchParams({
+                        text: clean,
+                        speaker: cfg.ttsSpeaker || 'Vivian',
+                        lang: 'Chinese'
+                    });
+                    if (cfg.ttsInstruct) params.set('instruct', cfg.ttsInstruct);
+
+                    const base = cfg.ttsUrl.replace(/\/+$/, '');
+                    const endpoint = (window.location.protocol.startsWith('http') && (base === 'http://10.10.0.40:38000' || base === 'http://127.0.0.1:38000'))
+                        ? `${window.location.origin}/tts/generate?${params.toString()}`
+                        : `${base}/generate?${params.toString()}`;
+
+                    const res = await fetch(endpoint);
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const audioUrl = URL.createObjectURL(blob);
+                        currentTtsAudio = new Audio(audioUrl);
+                        currentTtsAudio.onended = () => URL.revokeObjectURL(audioUrl);
+                        await currentTtsAudio.play();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('本地真人 TTS 调用失败，回退浏览器语音:', e);
+                }
+            }
+
+            if (!('speechSynthesis' in window)) return;
             const utter = new SpeechSynthesisUtterance(clean);
             utter.lang = 'zh-CN';
             utter.rate = 1.05;
@@ -1913,6 +1961,10 @@ E|--0--|  (6弦最粗)</pre>
         }
 
         function stopSpeaking() {
+            if (currentTtsAudio) {
+                currentTtsAudio.pause();
+                currentTtsAudio = null;
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
@@ -1932,21 +1984,37 @@ E|--0--|  (6弦最粗)</pre>
                 : 'https://sub2api.guangze-song.top/v1';
             const defaultKey = 'sk-709b53e00cc2e0e3128ea43402b09d74c0923df720fe7b8e43ebfa06f497089c';
             const defaultModel = 'gemini-4-argon';
+            const defaultTtsUrl = 'http://10.10.0.40:38000';
+            const defaultTtsSpeaker = 'Vivian';
+            const defaultTtsInstruct = '用温柔耐心的电吉他老师口吻，语速适中';
             try {
                 const raw = localStorage.getItem(AI_STORAGE_KEY);
                 const saved = raw ? JSON.parse(raw) : {};
                 const cfg = {
                     baseUrl: saved.baseUrl || defaultBase,
                     apiKey: saved.apiKey || defaultKey,
-                    model: saved.model || defaultModel
+                    model: saved.model || defaultModel,
+                    ttsUrl: saved.ttsUrl !== undefined ? saved.ttsUrl : defaultTtsUrl,
+                    ttsSpeaker: saved.ttsSpeaker || defaultTtsSpeaker,
+                    ttsInstruct: saved.ttsInstruct !== undefined ? saved.ttsInstruct : defaultTtsInstruct
                 };
                 document.getElementById('ai-base-url').value = cfg.baseUrl;
                 document.getElementById('ai-api-key').value = cfg.apiKey;
                 document.getElementById('ai-model-name').value = cfg.model;
+                document.getElementById('ai-tts-url').value = cfg.ttsUrl;
+                document.getElementById('ai-tts-speaker').value = cfg.ttsSpeaker;
+                document.getElementById('ai-tts-instruct').value = cfg.ttsInstruct;
                 updateAiStatusUI(cfg);
                 return cfg;
             } catch (e) {
-                return { baseUrl: defaultBase, apiKey: defaultKey, model: defaultModel };
+                return {
+                    baseUrl: defaultBase,
+                    apiKey: defaultKey,
+                    model: defaultModel,
+                    ttsUrl: defaultTtsUrl,
+                    ttsSpeaker: defaultTtsSpeaker,
+                    ttsInstruct: defaultTtsInstruct
+                };
             }
         }
 
@@ -1954,16 +2022,20 @@ E|--0--|  (6弦最粗)</pre>
             const baseUrl = document.getElementById('ai-base-url').value.trim().replace(/\/+$/, '');
             const apiKey = document.getElementById('ai-api-key').value.trim();
             const model = document.getElementById('ai-model-name').value.trim() || 'gpt-4o-mini';
-            const cfg = { baseUrl, apiKey, model };
+            const ttsUrl = document.getElementById('ai-tts-url').value.trim().replace(/\/+$/, '');
+            const ttsSpeaker = document.getElementById('ai-tts-speaker').value.trim() || 'Vivian';
+            const ttsInstruct = document.getElementById('ai-tts-instruct').value.trim();
+            const cfg = { baseUrl, apiKey, model, ttsUrl, ttsSpeaker, ttsInstruct };
             localStorage.setItem(AI_STORAGE_KEY, JSON.stringify(cfg));
             updateAiStatusUI(cfg);
             document.getElementById('ai-settings-panel').classList.add('hidden');
-            appendAiChat('system', `✅ 已保存配置：${model} @ ${baseUrl || '未填URL'}`);
+            appendAiChat('system', `✅ 已保存配置：${model} @ ${baseUrl || '未填URL'}${ttsUrl ? ` | 真人TTS: ${ttsSpeaker}` : ''}`);
         }
 
         function clearAiConfig() {
             localStorage.removeItem(AI_STORAGE_KEY);
             document.getElementById('ai-api-key').value = '';
+            document.getElementById('ai-tts-url').value = '';
             updateAiStatusUI({});
             appendAiChat('system', '🗑️ 已清除本地保存的 API 配置。');
         }

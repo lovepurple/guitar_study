@@ -13,8 +13,9 @@
 2. **[`docs/01-gear-and-silent-setup.md`](./docs/01-gear-and-silent-setup.md)**：1500 元内二手选琴避坑、6 步验琴清单、夜间零延迟耳机静音方案。
 3. **[`docs/02-roadmap-6-months.md`](./docs/02-roadmap-6-months.md)**：6 个月分阶段自学路线图（从第一天拿琴到弹出 Riff、五声音阶即兴与电脑录音）。
 4. **[`docs/03-music-theory-cheatsheet.md`](./docs/03-music-theory-cheatsheet.md)**：零基础大白话乐理速查（半音规律、六线谱读法、强力和弦/八度/五声音阶）。
-5. **[`practice-log/`](./practice-log/README.md)**：6 个月里程碑勾选表与每日 20 分钟打卡模板。
-6. **[`code_artifact.html`](./code_artifact.html)**：本地浏览器可打开的交互式电吉他指板与电子摇滚音阶实验室（无需联网后端，双击即可使用）。
+5. **[`docs/04-local-voice-tts-setup.md`](./docs/04-local-voice-tts-setup.md)**：MacBook Conda + Qwen3-TTS 本地真人语音安装与配置指南（支持情绪/语气指令与自动降级）。
+6. **[`practice-log/`](./practice-log/README.md)**：6 个月里程碑勾选表与每日 20 分钟打卡模板。
+7. **[`code_artifact.html`](./code_artifact.html)** + **[`start_studio.py`](./start_studio.py)**：交互式电吉他指板、鼓贝斯伴奏、真琴音高监听与 AI 语音陪练工作室。
 
 ## 快速开始
 1. 先看 [`docs/01-gear-and-silent-setup.md`](./docs/01-gear-and-silent-setup.md)，买齐“二手琴 + 有线耳放/效果器 + 落地琴架”。
