@@ -313,6 +313,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 视角对照 + 静音接线 + 黑话秒懂听音条 -->
+            <div class="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-1 lg:grid-cols-2 gap-3 text-xs">
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <svg viewBox="0 0 96 64" class="w-20 h-14 shrink-0">
+                        <rect x="6" y="10" width="84" height="44" rx="4" fill="#0f172a" stroke="#334155"/>
+                        <line x1="10" y1="18" x2="86" y2="18" stroke="#00f0ff" stroke-width="1"/>
+                        <line x1="10" y1="32" x2="86" y2="32" stroke="#64748b" stroke-width="2"/>
+                        <line x1="10" y1="46" x2="86" y2="46" stroke="#ff2a85" stroke-width="4"/>
+                        <text x="12" y="16" fill="#00f0ff" font-size="7">1弦(最细) 在最上</text>
+                        <text x="12" y="42" fill="#ff2a85" font-size="7">6弦(最粗) 在最下</text>
+                    </svg>
+                    <div>
+                        <div class="font-bold text-emerald-400">4. 为什么 6 弦在最下面？（看谱视角）</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">把六线谱想象成“把吉他平放在腿上、你从上往下低头看”——最细的 1 弦在最上，最粗的 6 弦在最下，数字几就按第几格，0 = 不按直接拨！</p>
+                    </div>
+                </div>
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <div class="w-20 h-14 shrink-0 rounded-lg bg-slate-900 border border-slate-700 flex flex-col items-center justify-center text-[10px] font-mono text-amber-300 leading-tight">
+                        <span>🎸→🔌→🎧</span>
+                        <span class="text-[9px] text-rose-400 mt-0.5">禁蓝牙!</span>
+                    </div>
+                    <div>
+                        <div class="font-bold text-rose-400">5. 深夜静音接线（绝对别用蓝牙耳机）</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">正确链路：<strong>电吉他 → 6.35mm大线 → 便携/桌面效果器 → 有线耳机</strong>（零延迟）。蓝牙耳机有 150ms+ 延迟，手拨完才响会彻底毁掉节奏！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📖 零基础黑话秒懂 + 点一下听对比 -->
+            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-cyber-cyan">📖 黑话秒懂（点一下既解释又发声）：</span>
+                    <button onclick="demoGlossary('fret')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyber-cyan/20 border border-slate-700 text-[11px] text-slate-200 transition-all">🔊 什么是「品 / 半音」？</button>
+                    <button onclick="demoGlossary('octave')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyber-cyan/20 border border-slate-700 text-[11px] text-slate-200 transition-all">🔊 什么是「八度」？</button>
+                    <button onclick="demoGlossary('power')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyber-purple/20 border border-slate-700 text-[11px] text-slate-200 transition-all">🔊 什么是「强力和弦」？</button>
+                    <button onclick="demoGlossary('mute')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyber-pink/20 border border-slate-700 text-[11px] text-slate-200 transition-all">🔊 「闷音 vs 开放音」差在哪？</button>
+                    <button onclick="demoGlossary('tone')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-amber-500/20 border border-slate-700 text-[11px] text-slate-200 transition-all">🔊 「失真 vs 清音」差在哪？</button>
+                </div>
+                <div id="glossary-explain-box" class="text-xs text-slate-300 bg-cyber-bg/80 border border-slate-800 rounded-xl px-3 py-2">
+                    👆 点击上面任意一个词，网页会立刻用大白话告诉你意思，并直接弹出声音对比给你听！
+                </div>
+            </div>
         </section>
 
         <!-- 独立实用工具条：电子鼓节拍器 + 6弦标准调音参考 -->
@@ -556,6 +599,13 @@ E|--0--|  (6弦最粗)</pre>
                     <span id="last-played-badge" class="px-2.5 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-xs font-mono text-cyber-cyan">
                         点击任意品格发声
                     </span>
+                    <button id="pc-jam-toggle" onclick="togglePcJamMode()" class="px-2.5 py-1 rounded-lg bg-cyber-purple/25 border border-cyber-purple/60 text-cyber-purple text-[11px] font-bold transition-all" title="还没买琴也能用电脑键盘跟鼓机/伴奏合奏！">
+                        ⌨️ 键盘空气吉他: 开
+                    </button>
+                    <label class="inline-flex items-center gap-1.5 text-[11px] text-slate-300 bg-cyber-bg px-2 py-1 rounded-lg border border-slate-700 cursor-pointer" title="在五声音阶/强力和弦格子上提示用左手哪根手指按（1食指 2中指 3无名指 4小指）">
+                        <input id="finger-hint-toggle" type="checkbox" checked onchange="renderFretboard()" class="accent-cyber-cyan">
+                        <span>🖐️ 指法提示 ①②③④</span>
+                    </label>
                 </div>
 
                 <!-- 图例说明 -->
@@ -592,7 +642,16 @@ E|--0--|  (6弦最粗)</pre>
 
             <div class="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-400 gap-1 pt-1">
                 <span>💡 视角说明：最上方为<strong>第 1 弦（最细，E4）</strong>，最下方为<strong>第 6 弦（最粗，E2）</strong>。<strong>字母=音名，数字 2/3/4=音高八度（数字越大越细越尖）</strong>！</span>
-                <span class="font-mono text-slate-500">支持键盘数字键 1-6 快速拨响空弦</span>
+                <span class="font-mono text-slate-500">⌨️ 1-6空弦 | Q-T 强力和弦(E5/G5/A5/C5/D5) | A-K 五声音阶</span>
+            </div>
+
+            <!-- 🎼 实时六线谱 (TAB) 双向对照条：点指板哪格，这里实时亮出怎么看谱 -->
+            <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-[11px] font-bold text-cyber-cyan shrink-0">🎼 实时六线谱 (TAB) 对照:</span>
+                    <pre id="live-tab-strip" class="font-mono text-[11px] leading-tight text-emerald-300 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">e|---| B|---| G|---| D|---| A|---| E|---|</pre>
+                </div>
+                <span id="live-tab-explain" class="text-[11px] text-slate-300">点击指板或按键盘，这里会立刻翻译成六线谱读法（0=空弦，数字=按第几格）</span>
             </div>
         </section>
 
@@ -1363,7 +1422,7 @@ E|--0--|  (6弦最粗)</pre>
                     const info = getNoteInfo(strObj.stringNum, f);
                     
                     // 重置样式
-                    badge.className = 'w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-mono font-bold transition-all duration-150 transform group-hover:scale-110';
+                    badge.className = 'relative w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-mono font-bold transition-all duration-150 transform group-hover:scale-110';
                     badge.textContent = '';
 
                     if (currentMode === 'explore') {
@@ -1385,6 +1444,13 @@ E|--0--|  (6弦最粗)</pre>
                                 badge.textContent = scaleObj.degrees[scalePos];
                             } else {
                                 badge.textContent = isRoot ? 'R' : '•';
+                            }
+                            const fh = getFingerHintBadge(strObj.stringNum, f);
+                            if (fh) {
+                                const fSpan = document.createElement('span');
+                                fSpan.className = 'absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-amber-400 text-black text-[9px] font-extrabold flex items-center justify-center shadow pointer-events-none';
+                                fSpan.textContent = fh;
+                                badge.appendChild(fSpan);
                             }
                         } else {
                             // 音阶外音：鼠标悬停时隐约提示音名
@@ -1429,6 +1495,7 @@ E|--0--|  (6弦最粗)</pre>
         function handleFretClick(stringNum, fret) {
             const info = getNoteInfo(stringNum, fret);
             document.getElementById('last-played-badge').textContent = `${stringNum}弦 ${fret}品 → ${info.fullName}`;
+            updateLiveTabStrip([{ s: stringNum, f: fret }], info.fullName);
 
             if (currentMode === 'explore') {
                 playGuitarNote(info.midi, 1.3);
@@ -1446,6 +1513,69 @@ E|--0--|  (6弦最粗)</pre>
             }
             // 核验 AI 老师布置的随堂指板任务
             verifyTeacherFretboardTask(stringNum, fret, info);
+        }
+
+        function getFingerHintBadge(stringNum, fret) {
+            const toggle = document.getElementById('finger-hint-toggle');
+            if (!toggle || !toggle.checked || fret === 0) return '';
+            if (currentMode === 'explore' && currentScale === 'pentatonic_minor') {
+                if (fret === 5) return '1';
+                if (fret === 7) return '3';
+                if (fret === 8) return '4';
+            }
+            if (currentMode === 'powerchord' && activePowerChord.length >= 2) {
+                const hit = activePowerChord.find(x => x.s === stringNum && x.f === fret);
+                if (hit) return hit.role === 'root' ? '1' : '3';
+            }
+            return '';
+        }
+
+        function updateLiveTabStrip(notes, labelText = '') {
+            const strip = document.getElementById('live-tab-strip');
+            const explain = document.getElementById('live-tab-explain');
+            if (!strip || !explain) return;
+            const names = ['e', 'B', 'G', 'D', 'A', 'E'];
+            const formatted = [1, 2, 3, 4, 5, 6].map((sNum, idx) => {
+                const hit = notes.find(n => n.s === sNum);
+                const val = hit ? String(hit.f) : '-';
+                return `${names[idx]}|-${val}-|`;
+            }).join(' ');
+            strip.textContent = formatted;
+            if (notes.length === 1) {
+                const n = notes[0];
+                explain.textContent = `读法：第 ${n.s} 弦${n.f === 0 ? '不按直接拨空弦(0)' : `按第 ${n.f} 格`}（${labelText}）`;
+            } else if (notes.length >= 2) {
+                explain.textContent = `强力和弦双音读法：同时拨响 ${notes.map(n => `${n.s}弦${n.f}品`).join(' + ')}（${labelText}）`;
+            }
+        }
+
+        function demoGlossary(topic) {
+            const box = document.getElementById('glossary-explain-box');
+            if (!box) return;
+            if (topic === 'fret') {
+                box.innerHTML = '💡 <strong>品 (Fret) & 半音</strong>：指板上一格就是一个“品”。每往右移 1 格就是升高 1 个“半音”（最小音高台阶）。听一下：6弦 0品 → 1品 → 2品！';
+                playGuitarNote(40, 0.55, 0);
+                playGuitarNote(41, 0.55, 0.45);
+                playGuitarNote(42, 0.7, 0.9);
+            } else if (topic === 'octave') {
+                box.innerHTML = '💡 <strong>八度 (Octave)</strong>：名字相同（都叫 E），但音高翻倍、听起来像“低楼层和高楼层”完美融合。听一下：6弦 E2 → 4弦2品 E3！';
+                playGuitarNote(40, 0.8, 0);
+                playGuitarNote(52, 0.9, 0.55);
+            } else if (topic === 'power') {
+                box.innerHTML = '💡 <strong>强力和弦 (Power Chord)</strong>：只需两根手指按“根音 + 下一弦右移两品的五度音”，开失真超厚实！听一下：E5 强力和弦！';
+                playGuitarNote(40, 1.2, 0);
+                playGuitarNote(47, 1.2, 0.02);
+            } else if (topic === 'mute') {
+                box.innerHTML = '💡 <strong>闷音 vs 开放音</strong>：前面两下是短促厚重的“咚-咚”（右手小鱼际轻贴琴桥），最后一下是手掌抬起的轰鸣长音！';
+                playGuitarNote(40, 0.14, 0);
+                playGuitarNote(40, 0.14, 0.35);
+                playGuitarNote(40, 1.1, 0.75);
+            } else if (topic === 'tone') {
+                box.innerHTML = '💡 <strong>清音 vs 失真</strong>：已帮你先用当前音色弹出 A-C-D，点击顶部「🎛️ 电子清音 / 🔥 摇滚失真」按钮再按一次，立刻听出电子水晶感与摇滚电锯感的区别！';
+                playGuitarNote(45, 0.5, 0);
+                playGuitarNote(48, 0.5, 0.35);
+                playGuitarNote(50, 0.8, 0.7);
+            }
         }
 
         // ==========================================
@@ -1921,14 +2051,66 @@ E|--0--|  (6弦最粗)</pre>
             renderFretboard();
         }
 
-        // 支持键盘数字键 1-6 拨响对应空弦（输入法/输入框聚焦时不触发）
+        let pcJamEnabled = true;
+        function togglePcJamMode() {
+            pcJamEnabled = !pcJamEnabled;
+            const btn = document.getElementById('pc-jam-toggle');
+            if (btn) {
+                btn.textContent = pcJamEnabled ? '⌨️ 键盘空气吉他: 开' : '⌨️ 键盘空气吉他: 关';
+                btn.className = pcJamEnabled
+                    ? 'px-2.5 py-1 rounded-lg bg-cyber-purple/25 border border-cyber-purple/60 text-cyber-purple text-[11px] font-bold transition-all'
+                    : 'px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-[11px] font-bold transition-all';
+            }
+        }
+
+        const PC_POWERCHORD_KEYS = {
+            'q': { s: 6, f: 0, name: 'E5' },
+            'w': { s: 6, f: 3, name: 'G5' },
+            'e': { s: 6, f: 5, name: 'A5' },
+            'r': { s: 5, f: 3, name: 'C5' },
+            't': { s: 5, f: 5, name: 'D5' }
+        };
+        const PC_PENTATONIC_KEYS = {
+            'a': { s: 6, f: 5 }, 's': { s: 6, f: 8 },
+            'd': { s: 5, f: 5 }, 'f': { s: 5, f: 7 },
+            'g': { s: 4, f: 5 }, 'h': { s: 4, f: 7 },
+            'j': { s: 3, f: 5 }, 'k': { s: 3, f: 7 }
+        };
+
+        // 支持键盘数字键 1-6 拨响对应空弦，以及 Q-T 强力和弦 / A-K 五声音阶（输入法/输入框聚焦时不触发）
         window.addEventListener('keydown', (e) => {
             if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
                 return;
             }
+            if (e.repeat) return;
             if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
                 const sNum = parseInt(e.key, 10);
                 handleFretClick(sNum, 0);
+                return;
+            }
+            if (!pcJamEnabled) return;
+            const key = e.key.toLowerCase();
+            if (PC_POWERCHORD_KEYS[key]) {
+                const pc = PC_POWERCHORD_KEYS[key];
+                const rInfo = getNoteInfo(pc.s, pc.f);
+                const fInfo = getNoteInfo(pc.s - 1, pc.f + 2);
+                playGuitarNote(rInfo.midi, 1.35, 0);
+                playGuitarNote(fInfo.midi, 1.35, 0.02);
+                animateString(pc.s);
+                animateString(pc.s - 1);
+                pulseBadge(pc.s, pc.f);
+                pulseBadge(pc.s - 1, pc.f + 2);
+                document.getElementById('last-played-badge').textContent = `⌨️ [${key.toUpperCase()}] ${pc.name} 强力和弦`;
+                updateLiveTabStrip([{ s: pc.s, f: pc.f }, { s: pc.s - 1, f: pc.f + 2 }], pc.name);
+            } else if (PC_PENTATONIC_KEYS[key]) {
+                const pt = PC_PENTATONIC_KEYS[key];
+                const info = getNoteInfo(pt.s, pt.f);
+                playGuitarNote(info.midi, 1.1, 0);
+                animateString(pt.s);
+                pulseBadge(pt.s, pt.f);
+                document.getElementById('last-played-badge').textContent = `⌨️ [${key.toUpperCase()}] ${pt.s}弦${pt.f}品 → ${info.fullName}`;
+                updateLiveTabStrip([{ s: pt.s, f: pt.f }], info.fullName);
+                verifyTeacherFretboardTask(pt.s, pt.f, info);
             }
         });
 
