@@ -447,6 +447,153 @@ E|--0--|  (6弦最粗)</pre>
             </div>
         </section>
 
+        <!-- 不枯燥实战工作台：真琴监听调音 | 鼓贝斯伴奏慢练 | 20分钟带练 & 闷音训练 -->
+        <section class="bg-cyber-card border border-cyber-border rounded-2xl p-4 md:p-5 shadow-2xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <div class="flex flex-wrap gap-1.5">
+                    <button onclick="switchLabTab('tuner')" id="lab-tab-tuner" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyber-cyan text-black transition-all">
+                        🎙️ 真琴监听 & 实时调音
+                    </button>
+                    <button onclick="switchLabTab('backing')" id="lab-tab-backing" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+                        🎧 电子/摇滚伴奏 & 变速慢练
+                    </button>
+                    <button onclick="switchLabTab('routine')" id="lab-tab-routine" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+                        ⏱️ 20分钟带练 & 闷音训练
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-400">🔥 练习能量 Combo:</span>
+                    <span id="practice-combo-badge" class="px-2.5 py-0.5 rounded-full bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink font-mono font-bold">0 x</span>
+                </div>
+            </div>
+
+            <!-- Tab 1: 真琴监听 & 实时调音器 -->
+            <div id="lab-panel-tuner" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                <div class="lg:col-span-5 space-y-2.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="mic-tuner-btn" onclick="togglePitchDetector()" class="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all">
+                            <span id="mic-tuner-icon">🎙️</span>
+                            <span id="mic-tuner-text">开启真琴监听 (麦克风/声卡)</span>
+                        </button>
+                        <select id="audio-input-select" onchange="restartPitchDetectorIfActive()" class="bg-cyber-bg border border-slate-700 rounded-lg px-2.5 py-2 text-[11px] text-slate-300 max-w-[180px]">
+                            <option value="">默认音频输入设备</option>
+                        </select>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        接上 USB 声卡/综合效果器或直接用电脑麦克风，网页会实时听你弹的真琴！<strong class="text-slate-200">在「老师随堂任务」或「模式03」下，弹真琴也能自动判对错。</strong>
+                    </p>
+                </div>
+                <div class="lg:col-span-7 bg-cyber-bg border border-slate-800 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div id="tuner-note-box" class="w-16 h-16 rounded-2xl bg-slate-900 border-2 border-slate-700 flex flex-col items-center justify-center">
+                            <span id="tuner-note-name" class="text-2xl font-mono font-extrabold text-slate-400">--</span>
+                            <span id="tuner-freq" class="text-[10px] font-mono text-slate-500">0 Hz</span>
+                        </div>
+                        <div class="space-y-1">
+                            <div id="tuner-status-text" class="text-xs font-bold text-slate-300">等待开启监听...</div>
+                            <div class="text-[11px] text-slate-500">标准定音目标：6E · 5A · 4D · 3G · 2B · 1E</div>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-56 space-y-1">
+                        <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                            <span>-50¢ 偏低</span>
+                            <span id="tuner-cents-label" class="text-cyber-cyan font-bold">0¢</span>
+                            <span>+50¢ 偏高</span>
+                        </div>
+                        <div class="relative h-3 bg-slate-900 rounded-full border border-slate-700 overflow-hidden">
+                            <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-emerald-400/70 -translate-x-1/2"></div>
+                            <div id="tuner-needle" class="absolute top-0.5 bottom-0.5 w-2.5 rounded-full bg-cyber-cyan transition-all duration-75" style="left: calc(50% - 5px);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: 电子/摇滚鼓+贝斯伴奏引擎 + 变速慢练 -->
+            <div id="lab-panel-backing" class="hidden space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    <button onclick="selectBackingStyle(0)" id="bk-style-0" class="bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-cyber-purple text-xs transition-all">
+                        <div class="font-bold text-white">🌃 Synthwave 电子脉冲</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">A-F-G-E 贝斯线 · 适合 Am 五声即兴</div>
+                    </button>
+                    <button onclick="selectBackingStyle(1)" id="bk-style-1" class="bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-slate-700 text-xs transition-all">
+                        <div class="font-bold text-white">⚡ 经典朋克摇滚推进</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">E-G-A-B 强力律动 · 练下拨节奏</div>
+                    </button>
+                    <button onclick="selectBackingStyle(2)" id="bk-style-2" class="bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-slate-700 text-xs transition-all">
+                        <div class="font-bold text-white">🤖 工业电子低音 Riff</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">重低音根音律动 · 练右手闷音</div>
+                    </button>
+                    <button onclick="selectBackingStyle(3)" id="bk-style-3" class="bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-slate-700 text-xs transition-all">
+                        <div class="font-bold text-white">🎸 暗潮后朋克贝斯</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">D-C-B-A 行进 · 练换把位流畅度</div>
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-cyber-bg border border-slate-800 rounded-xl p-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="backing-play-btn" onclick="toggleBackingTrack()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-pink text-white text-xs font-bold flex items-center gap-1.5">
+                            <span id="backing-play-icon">▶</span>
+                            <span id="backing-play-text">开启鼓+贝斯伴奏</span>
+                        </button>
+                        <span class="text-xs text-slate-400 ml-1">变速慢练：</span>
+                        <div class="inline-flex rounded-lg bg-slate-900 p-0.5 border border-slate-700 text-[11px]">
+                            <button onclick="setBackingSpeed(0.5)" id="spd-0.5" class="spd-btn px-2 py-1 rounded-md text-slate-300 hover:text-white">50%</button>
+                            <button onclick="setBackingSpeed(0.75)" id="spd-0.75" class="spd-btn px-2 py-1 rounded-md text-slate-300 hover:text-white">75%</button>
+                            <button onclick="setBackingSpeed(0.9)" id="spd-0.9" class="spd-btn px-2 py-1 rounded-md text-slate-300 hover:text-white">90%</button>
+                            <button onclick="setBackingSpeed(1)" id="spd-1" class="spd-btn px-2 py-1 rounded-md bg-cyber-cyan text-black font-bold">100%</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span id="backing-chord-now" class="font-mono text-cyber-cyan font-bold">当前和弦: --</span>
+                        <span id="backing-bpm-now" class="font-mono text-slate-400">100 BPM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: 20分钟下班带练计时器 + 闷音节奏型视觉训练器 -->
+            <div id="lab-panel-routine" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <!-- 20 分钟倒计时带练 -->
+                <div class="lg:col-span-6 bg-cyber-bg border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-cyber-cyan">⏱️ 下班 20 分钟不枯燥带练</span>
+                        <span id="routine-stage-badge" class="text-[11px] font-mono text-cyber-amber">阶段 1/4: 热身爬格子</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <div id="routine-timer-display" class="text-2xl font-mono font-extrabold text-white">03:00</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button id="routine-toggle-btn" onclick="toggleRoutineTimer()" class="px-3 py-1.5 rounded-lg bg-cyber-purple text-white text-xs font-bold">▶ 开始带练</button>
+                            <button onclick="nextRoutineStage()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs">下一阶段 ⏭</button>
+                            <button onclick="exportPracticeLog()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold">📋 生成今日日志</button>
+                        </div>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                        <div id="routine-progress-bar" class="h-full bg-gradient-to-r from-cyber-cyan to-cyber-purple transition-all" style="width: 0%;"></div>
+                    </div>
+                    <p id="routine-stage-tip" class="text-[11px] text-slate-400">
+                        目标：手指放松不酸痛，用每根指头按 6 弦 5-6-7-8 品，保持匀速呼吸。
+                    </p>
+                </div>
+
+                <!-- 闷音 / 八分音符节奏型视觉训练器 -->
+                <div class="lg:col-span-6 bg-cyber-bg border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <span class="text-xs font-bold text-cyber-pink">🥁 闷音(Palm Mute)与八分律动训练</span>
+                        <select id="rhythm-pattern-select" onchange="renderRhythmGrid()" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-slate-200">
+                            <option value="chug">全闷音八分推进 (PM x 8)</option>
+                            <option value="gallop">摇滚重音切分 (重音-闷-闷-重音)</option>
+                            <option value="synth">电子八分脉冲 (强-弱-闷-强)</option>
+                        </select>
+                    </div>
+                    <div id="rhythm-grid" class="grid grid-cols-8 gap-1.5">
+                        <!-- JS 生成 1 & 2 & 3 & 4 & -->
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <button id="rhythm-play-btn" onclick="toggleRhythmTrainer()" class="px-3 py-1.5 rounded-lg bg-cyber-pink/20 hover:bg-cyber-pink/30 border border-cyber-pink/50 text-cyber-pink text-xs font-bold">▶ 启动视觉节奏训练</button>
+                        <span class="text-[11px] text-slate-400">PM = 右手掌缘轻贴琴桥闷音 · ACC = 放开重扫</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- 底部新手快速入门知识卡片（精简大白话） -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-cyber-card/70 border border-cyber-border rounded-2xl p-4">
@@ -469,22 +616,28 @@ E|--0--|  (6弦最粗)</pre>
             </div>
         </section>
 
-        <!-- 实时 AI 吉他助教与监督面板 (OpenAI 兼容接口) -->
+        <!-- 实时 AI 电吉他老师工作台 (主动带练 + 薄弱点诊断 + 指板任务核验) -->
         <section id="ai-tutor-section" class="bg-cyber-card border border-cyber-purple/40 rounded-2xl p-4 md:p-5 shadow-2xl space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-lg bg-cyber-purple/20 border border-cyber-purple/40 flex items-center justify-center text-base">🤖</span>
+                    <span class="w-8 h-8 rounded-lg bg-cyber-purple/20 border border-cyber-purple/40 flex items-center justify-center text-base">🎓</span>
                     <div>
-                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                            实时 AI 电吉他私教与练习监督
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
+                            AI 电吉他老师（主动带练 & 薄弱点诊断）
                             <span id="ai-config-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">未配置 API</span>
                         </h2>
-                        <p class="text-[11px] text-slate-400">自动读取你当前的音阶、强力和弦、测验得分与鼓机 BPM，随时讲解或监督练习（Key 仅存于本地浏览器）</p>
+                        <p class="text-[11px] text-slate-400">老师会主动给你布置指板动手任务、追踪你的卡点与错题，并在关键节点自动跳出来纠正（无需自己硬憋问题）</p>
                     </div>
                 </div>
-                <button onclick="toggleAiSettings()" class="px-3 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 font-medium">
-                    ⚙ 配置 Base URL / API Key
-                </button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <label class="flex items-center gap-1.5 text-xs text-slate-300 bg-cyber-bg px-2.5 py-1.5 rounded-lg border border-slate-700 cursor-pointer" title="连错2次或完成任务时，AI老师自动介入点评">
+                        <input id="ai-auto-coach" type="checkbox" checked class="accent-cyber-purple">
+                        <span>节点自动监督</span>
+                    </label>
+                    <button onclick="toggleAiSettings()" class="px-3 py-1.5 rounded-lg bg-cyber-bg hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 font-medium">
+                        ⚙ 配置 API
+                    </button>
+                </div>
             </div>
 
             <!-- API 配置面板（可折叠） -->
@@ -504,7 +657,7 @@ E|--0--|  (6弦最粗)</pre>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                    <span class="text-[11px] text-slate-500">🔒 密钥仅保存在你当前浏览器的 localStorage 中，直接由浏览器请求你填写的 Base URL，不经过任何第三方中转。</span>
+                    <span class="text-[11px] text-slate-500">🔒 密钥仅保存在本地浏览器 localStorage，直连你的 Base URL。</span>
                     <div class="flex items-center gap-2">
                         <button onclick="clearAiConfig()" class="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs">清除配置</button>
                         <button onclick="saveAiConfig()" class="px-4 py-1.5 rounded-lg bg-cyber-cyan text-black font-bold text-xs hover:opacity-90">保存配置</button>
@@ -512,34 +665,62 @@ E|--0--|  (6弦最粗)</pre>
                 </div>
             </div>
 
-            <!-- 快捷场景触发按钮 -->
-            <div class="flex flex-wrap gap-2">
-                <button onclick="askAiPreset('explain_current')" class="px-3 py-1.5 rounded-xl bg-cyber-cyan/10 hover:bg-cyber-cyan/20 border border-cyber-cyan/40 text-cyber-cyan text-xs font-medium transition-all">
-                    💡 用大白话讲讲当前画面怎么弹
-                </button>
-                <button onclick="askAiPreset('today_plan')" class="px-3 py-1.5 rounded-xl bg-cyber-purple/15 hover:bg-cyber-purple/25 border border-cyber-purple/40 text-purple-300 text-xs font-medium transition-all">
-                    ⏱️ 下班只有20分钟，给我安排今天练什么
-                </button>
-                <button onclick="askAiPreset('review_quiz')" class="px-3 py-1.5 rounded-xl bg-cyber-amber/15 hover:bg-cyber-amber/25 border border-cyber-amber/40 text-cyber-amber text-xs font-medium transition-all">
-                    🎯 根据我刚才的认音表现点评一下
-                </button>
-                <button onclick="askAiPreset('gear_check')" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-medium transition-all">
-                    🎸 帮我出个1500元内二手选琴/防踩坑小测
-                </button>
-            </div>
+            <!-- 老师主导控制台：主动出题 + 薄弱点雷达 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                <!-- 左侧：当前随堂动手任务卡片 -->
+                <div class="lg:col-span-7 bg-gradient-to-br from-cyber-purple/15 to-cyber-bg border border-cyber-purple/40 rounded-xl p-3.5 flex flex-col justify-between gap-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-cyber-cyan">📌 老师布置的随堂动手任务</span>
+                        <span id="teacher-task-status" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">待开始</span>
+                    </div>
+                    <p id="teacher-task-desc" class="text-xs md:text-sm font-semibold text-white">
+                        点击右侧「▶ 让老师开始带练」，AI 老师会根据你的进度在指板上给你出实战小任务，你直接点指板作答即可！
+                    </p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="startTeacherLesson()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-pink text-white text-xs font-bold shadow-md hover:opacity-90 transition-all">
+                            ▶ 让老师开始带练 / 下一关
+                        </button>
+                        <button onclick="runTeacherDiagnosis('manual')" class="px-3.5 py-2 rounded-xl bg-cyber-amber/15 hover:bg-cyber-amber/25 border border-cyber-amber/50 text-cyber-amber text-xs font-bold transition-all">
+                            🔍 诊断我哪里不会
+                        </button>
+                    </div>
+                </div>
 
-            <!-- 对话记录区 -->
-            <div id="ai-chat-box" class="bg-cyber-bg border border-slate-800 rounded-xl p-3.5 h-60 overflow-y-auto space-y-3 text-xs leading-relaxed">
-                <div class="text-slate-400">
-                    👋 你好！我是你的实时电吉他 AI 助教。配置好右上角的 <strong class="text-slate-200">Base URL 和 API Key</strong> 后，你可以随时点上面的快捷按钮，或者直接输入你的困惑（例如：“手腕有点酸怎么调整？”、“这个强力和弦右手怎么消音？”）。
+                <!-- 右侧：自动追踪的薄弱点雷达 -->
+                <div class="lg:col-span-5 bg-cyber-bg border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-cyber-amber">📡 自动追踪：你的薄弱点</span>
+                        <button onclick="clearWeaknesses()" class="text-[10px] text-slate-500 hover:text-slate-300">清空记录</button>
+                    </div>
+                    <div id="weakness-radar-list" class="text-xs text-slate-400 space-y-1 max-h-24 overflow-y-auto">
+                        <div>暂无卡点记录 —— 多在指板或模式 03 练几题，系统会自动帮你抓出最容易错的弦和品格。</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 输入框 -->
-            <div class="flex gap-2">
-                <input id="ai-user-input" type="text" onkeydown="if(event.key==='Enter') sendAiMessage()" placeholder="输入你的问题，或汇报今天练了什么（按 Enter 发送）..." class="flex-1 bg-cyber-bg border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyber-purple">
-                <button id="ai-send-btn" onclick="sendAiMessage()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-pink text-white font-bold text-xs hover:opacity-90 transition-all shrink-0">
-                    发送提问
+            <!-- 老师讲解与反馈区 -->
+            <div id="ai-chat-box" class="bg-cyber-bg border border-slate-800 rounded-xl p-3.5 h-56 overflow-y-auto space-y-3 text-xs leading-relaxed">
+                <div class="text-slate-400">
+                    👋 我是你的电吉他 AI 老师。配置好右上角 API 后，点上面的 <strong class="text-white">「▶ 让老师开始带练」</strong>，我会主动给你安排 20 分钟练习、出题考你，并在你卡壳时直接告诉你“为什么错了、怎么改”。
+                </div>
+            </div>
+
+            <!-- 语音 + 补充沟通区（抱着琴时直接语音问老师） -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button id="voice-mic-btn" onclick="toggleVoiceInput()" class="px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan font-bold text-xs flex items-center gap-1.5 transition-all shrink-0">
+                    <span id="voice-mic-icon">🎤</span>
+                    <span id="voice-mic-text">点击说话问老师</span>
+                </button>
+                <label class="flex items-center gap-1.5 text-xs text-slate-300 bg-cyber-bg px-2.5 py-2 rounded-xl border border-slate-700 cursor-pointer shrink-0" title="AI老师回复后自动语音念出来，抱着琴不用一直盯屏幕">
+                    <input id="ai-tts-toggle" type="checkbox" checked class="accent-cyber-cyan">
+                    <span>🔊 语音播报回复</span>
+                </label>
+                <button onclick="stopSpeaking()" class="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs shrink-0" title="停止当前语音播报">
+                    🔇 静音
+                </button>
+                <input id="ai-user-input" type="text" onkeydown="if(event.key==='Enter') sendAiMessage()" placeholder="也可直接打字告诉老师（如：手腕酸/这音怎么按）..." class="flex-1 min-w-[200px] bg-cyber-bg border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyber-purple">
+                <button id="ai-send-btn" onclick="sendAiMessage()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition-all shrink-0">
+                    发送
                 </button>
             </div>
         </section>
@@ -1019,6 +1200,8 @@ E|--0--|  (6弦最粗)</pre>
                     checkPower5Answer(stringNum, fret);
                 }
             }
+            // 核验 AI 老师布置的随堂指板任务
+            verifyTeacherFretboardTask(stringNum, fret, info);
         }
 
         // ==========================================
@@ -1208,11 +1391,16 @@ E|--0--|  (6弦最粗)</pre>
             if (selectedNote === currentQuiz.noteName) {
                 quizScore += 10;
                 quizStreak += 1;
+                practiceCombo += 1;
+                updateComboUI();
                 fb.innerHTML = `<span class="text-emerald-400">✅ 回答正确！${currentQuiz.s}弦 ${currentQuiz.f}品 就是 ${currentQuiz.fullName}。</span>`;
                 playGuitarNote(currentQuiz.midi, 0.8);
                 setTimeout(nextQuizQuestion, 900);
             } else {
                 quizStreak = 0;
+                practiceCombo = 0;
+                updateComboUI();
+                recordWeakness('identify', `${currentQuiz.s}弦${currentQuiz.f}品(${currentQuiz.noteName})`, `误选为 ${selectedNote}`);
                 fb.innerHTML = `<span class="text-rose-400">❌ 再算一算：${currentQuiz.s}弦空弦是 ${STRINGS.find(x=>x.stringNum===currentQuiz.s).name}，往右数 ${currentQuiz.f} 个半音试试（注意 E-F 和 B-C 之间无升号）。</span>`;
             }
             updateScoreUI();
@@ -1224,6 +1412,8 @@ E|--0--|  (6弦最粗)</pre>
             if (clickedS === currentQuiz.targetS && clickedF === currentQuiz.targetF) {
                 quizScore += 15;
                 quizStreak += 1;
+                practiceCombo += 1;
+                updateComboUI();
                 fb.innerHTML = `<span class="text-emerald-400">🔥 完美！往下一根弦右移两品（${clickedS}弦 ${clickedF}品），强力和弦 ${currentQuiz.noteName}5 成立！</span>`;
                 // 齐奏强力和弦奖励音效
                 playGuitarNote(currentQuiz.midi, 1.0, 0);
@@ -1231,6 +1421,9 @@ E|--0--|  (6弦最粗)</pre>
                 setTimeout(nextQuizQuestion, 1100);
             } else {
                 quizStreak = 0;
+                practiceCombo = 0;
+                updateComboUI();
+                recordWeakness('power5', `${currentQuiz.s}弦${currentQuiz.f}品强力和弦五度音`, `误点了 ${clickedS}弦${clickedF}品`);
                 fb.innerHTML = `<span class="text-rose-400">❌ 位置差一点：记住口诀“往下一根弦（更细一格），再往右数 2 品”。</span>`;
             }
             updateScoreUI();
@@ -1492,10 +1685,238 @@ E|--0--|  (6弦最粗)</pre>
         });
 
         // ==========================================
-        // 9. 实时 LLM 私教请求与状态监督 (OpenAI 兼容格式)
+        // 9. 实时 LLM 老师工作台 + 语音交互 + 薄弱点诊断 + 随堂任务
         // ==========================================
         const AI_STORAGE_KEY = 'cyberfret_ai_config_v1';
+        const WEAKNESS_STORAGE_KEY = 'cyberfret_weakness_v1';
         let aiHistory = [];
+        let practiceCombo = 0;
+        let currentTeacherTask = null;
+        let teacherLessonStep = 0;
+        let consecutiveWeakCount = 0;
+
+        function updateComboUI() {
+            const el = document.getElementById('practice-combo-badge');
+            if (el) el.textContent = `${practiceCombo} x`;
+        }
+
+        function loadWeaknesses() {
+            try {
+                return JSON.parse(localStorage.getItem(WEAKNESS_STORAGE_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveWeaknesses(list) {
+            localStorage.setItem(WEAKNESS_STORAGE_KEY, JSON.stringify(list.slice(0, 20)));
+            renderWeaknessRadar();
+        }
+
+        function recordWeakness(type, target, detail) {
+            const list = loadWeaknesses();
+            list.unshift({
+                type,
+                target,
+                detail,
+                time: new Date().toLocaleTimeString('zh-CN', { hour12: false })
+            });
+            saveWeaknesses(list);
+            consecutiveWeakCount += 1;
+
+            const autoCoach = document.getElementById('ai-auto-coach');
+            if (autoCoach && autoCoach.checked && consecutiveWeakCount >= 2) {
+                consecutiveWeakCount = 0;
+                const cfg = loadAiConfig();
+                if (cfg.baseUrl && cfg.apiKey) {
+                    runTeacherDiagnosis('auto');
+                } else {
+                    appendAiChat('assistant', `📌 老师发现你在「${target}」卡住了（${detail}）。记住：6弦空弦E、5弦空弦A、4弦空弦D，相邻一品差半音，E-F 与 B-C 之间没有黑键！`);
+                }
+            }
+        }
+
+        function clearWeaknesses() {
+            localStorage.removeItem(WEAKNESS_STORAGE_KEY);
+            renderWeaknessRadar();
+        }
+
+        function renderWeaknessRadar() {
+            const box = document.getElementById('weakness-radar-list');
+            if (!box) return;
+            const list = loadWeaknesses();
+            if (!list.length) {
+                box.innerHTML = '<div>暂无卡点记录 —— 多在指板或模式 03 练几题，系统会自动帮你抓出最容易错的弦和品格。</div>';
+                return;
+            }
+            box.innerHTML = list.slice(0, 6).map(w =>
+                `<div class="flex items-center justify-between gap-2 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
+                    <span class="text-amber-300 font-medium truncate">⚠️ ${w.target}</span>
+                    <span class="text-[10px] text-slate-500 shrink-0">${w.detail}</span>
+                </div>`
+            ).join('');
+        }
+
+        // 随堂动手任务库（老师主动出题，支持点指板或真琴发声自动核验）
+        const TEACHER_TASKS = [
+            {
+                desc: '任务 1：请你在指板上找出「第 6 弦第 5 品 (A音)」，点它或者用真琴弹响它！（提示：这是摇滚最常用的 A5 强力和弦根音）',
+                checkClick: (s, f, info) => s === 6 && f === 5,
+                targetNote: 'A',
+                hint: '第 6 弦空弦是 E，往右数 5 品就是 A（第一个带圆点是 3 品 G，第二个圆点 5 品就是 A）。'
+            },
+            {
+                desc: '任务 2：找出并按响「第 5 弦第 3 品 (C音)」，它是电子/流行最常用的根音之一。',
+                checkClick: (s, f, info) => s === 5 && f === 3,
+                targetNote: 'C',
+                hint: '第 5 弦空弦是 A，1品 A#，2品 B，B和C挨在一起，所以第 3 品就是 C！'
+            },
+            {
+                desc: '任务 3：请在模式 02（或当前指板）找到 6 弦 3 品 G 音的「五度音」位置（构成 G5 强力和弦）。',
+                checkClick: (s, f, info) => s === 5 && f === 5,
+                targetNote: 'D',
+                hint: '口诀：往下一根弦（到 5 弦），再往右移 2 品（3 + 2 = 5 品）。'
+            },
+            {
+                desc: '任务 4：挑战高音区！找到「第 1 弦第 5 品」的音，点响或真琴弹出来。',
+                checkClick: (s, f, info) => s === 1 && f === 5,
+                targetNote: 'A',
+                hint: '1 弦最细（最上面那根），第 5 品是第二个圆点位置。'
+            }
+        ];
+
+        function startTeacherLesson() {
+            const task = TEACHER_TASKS[teacherLessonStep % TEACHER_TASKS.length];
+            teacherLessonStep += 1;
+            currentTeacherTask = task;
+
+            document.getElementById('teacher-task-desc').textContent = task.desc;
+            const status = document.getElementById('teacher-task-status');
+            status.textContent = '进行中 · 等待作答';
+            status.className = 'text-[11px] px-2 py-0.5 rounded-full bg-cyber-amber/20 text-cyber-amber font-mono';
+
+            speakText(task.desc);
+
+            const cfg = loadAiConfig();
+            if (cfg.baseUrl && cfg.apiKey) {
+                callLlmTeacher(
+                    `我刚刚点下了「让老师开始带练」，当前随堂动手任务是：「${task.desc}」。请用老师口吻简短给我打个气，并用一句话点明左手按弦或右手消音的注意事项（不超过60字）。`
+                );
+            }
+        }
+
+        function verifyTeacherFretboardTask(s, f, info) {
+            if (!currentTeacherTask) return;
+            const status = document.getElementById('teacher-task-status');
+            if (currentTeacherTask.checkClick(s, f, info)) {
+                practiceCombo += 2;
+                updateComboUI();
+                consecutiveWeakCount = 0;
+                status.textContent = '✅ 已通关';
+                status.className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono';
+                const msg = `🔥 漂亮！${s}弦 ${f}品 (${info.fullName}) 完全正确！Combo +2！点击「▶ 下一关」继续挑战。`;
+                appendAiChat('assistant', msg);
+                speakText('回答正确，漂亮！可以进入下一关。');
+                currentTeacherTask = null;
+            } else {
+                practiceCombo = 0;
+                updateComboUI();
+                recordWeakness('teacher_task', currentTeacherTask.desc.slice(0, 22), `误按 ${s}弦${f}品(${info.noteName})`);
+                appendAiChat('assistant', `🤔 你按的是 ${s}弦 ${f}品 (${info.noteName})，还没对准。老师提示：${currentTeacherTask.hint}`);
+            }
+        }
+
+        async function runTeacherDiagnosis(triggerType) {
+            const cfg = loadAiConfig();
+            const weaknesses = loadWeaknesses();
+            if (!cfg.baseUrl || !cfg.apiKey) {
+                document.getElementById('ai-settings-panel').classList.remove('hidden');
+                appendAiChat('system', '⚠️ 配置好 Base URL 和 API Key 后，AI 老师才能为你做深度薄弱点诊断！');
+                return;
+            }
+            const summary = weaknesses.length
+                ? weaknesses.slice(0, 6).map(w => `- ${w.target} (${w.detail})`).join('\n')
+                : '暂时还没有明显错题记录。';
+
+            const prompt = triggerType === 'auto'
+                ? `系统检测到学习者刚才连续卡壳了 2 次，最新薄弱点记录如下：\n${summary}\n请你作为电吉他老师主动跳出来，用大白话分析他为什么总卡在这，并给出一个 30 秒就能试的纠正小方法。`
+                : `请根据我最近的薄弱点雷达记录，诊断我目前哪里不会、最需要补什么：\n${summary}\n请用直白、鼓励的老师口吻告诉我：1）卡点原因；2）今晚花5分钟先练哪一招。`;
+
+            await callLlmTeacher(prompt, triggerType === 'auto' ? '🔍 老师主动介入诊断...' : '🔍 正在分析你的薄弱点...');
+        }
+
+        // ==========================================
+        // 10. 语音提问 (Web Speech STT) & 语音播报 (TTS)
+        // ==========================================
+        let speechRecognition = null;
+        let isListeningVoice = false;
+
+        function toggleVoiceInput() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                appendAiChat('system', '⚠️ 当前浏览器不支持内置语音识别，请使用最新版 Chrome / Edge，或直接打字输入。');
+                return;
+            }
+
+            if (isListeningVoice && speechRecognition) {
+                speechRecognition.stop();
+                return;
+            }
+
+            speechRecognition = new SpeechRec();
+            speechRecognition.lang = 'zh-CN';
+            speechRecognition.interimResults = false;
+            speechRecognition.maxAlternatives = 1;
+
+            const btn = document.getElementById('voice-mic-btn');
+            const icon = document.getElementById('voice-mic-icon');
+            const txt = document.getElementById('voice-mic-text');
+
+            speechRecognition.onstart = () => {
+                isListeningVoice = true;
+                btn.className = 'px-3.5 py-2 rounded-xl bg-rose-500/25 border border-rose-500 text-rose-300 font-bold text-xs flex items-center gap-1.5 animate-pulse shrink-0';
+                icon.textContent = '🔴';
+                txt.textContent = '正在听你说话... (点击停止)';
+            };
+
+            speechRecognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                if (transcript) {
+                    document.getElementById('ai-user-input').value = transcript;
+                    sendAiMessage();
+                }
+            };
+
+            speechRecognition.onerror = (event) => {
+                appendAiChat('system', `🎤 语音识别提示：${event.error}（请确认已允许浏览器使用麦克风）`);
+            };
+
+            speechRecognition.onend = () => {
+                isListeningVoice = false;
+                btn.className = 'px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan font-bold text-xs flex items-center gap-1.5 transition-all shrink-0';
+                icon.textContent = '🎤';
+                txt.textContent = '点击说话问老师';
+            };
+
+            speechRecognition.start();
+        }
+
+        function speakText(text) {
+            const toggle = document.getElementById('ai-tts-toggle');
+            if (!toggle || !toggle.checked || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const clean = text.replace(/[#*`>]/g, '').slice(0, 300);
+            const utter = new SpeechSynthesisUtterance(clean);
+            utter.lang = 'zh-CN';
+            utter.rate = 1.05;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function stopSpeaking() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
 
         function scrollToAiTutor() {
             document.getElementById('ai-tutor-section').scrollIntoView({ behavior: 'smooth' });
@@ -1558,6 +1979,7 @@ E|--0--|  (6弦最粗)</pre>
             const chordInfo = activePowerChord.length
                 ? activePowerChord.map(n => `${n.s}弦${n.f}品(${n.role})`).join(', ')
                 : '无';
+            const weaknesses = loadWeaknesses().slice(0, 4).map(w => `${w.target}:${w.detail}`).join(' | ') || '暂无';
 
             return [
                 `当前页面模式: ${currentMode} (explore=音阶探索, powerchord=强力和弦实战, quiz=认音挑战)`,
@@ -1566,7 +1988,9 @@ E|--0--|  (6弦最粗)</pre>
                 `当前选中音阶: ${scaleLabel}`,
                 `当前激活强力和弦: ${chordInfo}`,
                 `电子鼓机状态: ${drumTimer ? '运行中' : '未开启'}, 速度 ${drumBpm} BPM`,
-                `认音测验战绩: 总分 ${quizScore}, 当前连对 ${quizStreak}`,
+                `认音测验战绩: 总分 ${quizScore}, 当前连对 ${quizStreak}, 练习Combo ${practiceCombo}`,
+                `当前随堂任务: ${currentTeacherTask ? currentTeacherTask.desc : '无'}`,
+                `最近薄弱点雷达: ${weaknesses}`,
                 `最近一次点击/提示: ${lastPlayed}`
             ].join('\n');
         }
@@ -1580,7 +2004,7 @@ E|--0--|  (6弦最粗)</pre>
                 item.querySelector('div:last-child').textContent = text;
             } else if (role === 'assistant') {
                 item.className = 'bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 text-slate-200 mr-6';
-                item.innerHTML = `<div class="text-[10px] text-cyber-cyan font-bold mb-1">🤖 AI 吉他私教</div><div class="whitespace-pre-wrap"></div>`;
+                item.innerHTML = `<div class="text-[10px] text-cyber-cyan font-bold mb-1">🎓 AI 电吉他老师</div><div class="whitespace-pre-wrap"></div>`;
                 item.querySelector('div:last-child').textContent = text;
             } else {
                 item.className = 'text-[11px] text-slate-400 italic px-1';
@@ -1591,47 +2015,20 @@ E|--0--|  (6弦最粗)</pre>
             return item;
         }
 
-        function askAiPreset(preset) {
-            const prompts = {
-                explain_current: '请结合我现在网页上的当前状态（模式/音阶/和弦/BPM），用零基础听得懂的大白话，告诉我这东西听起来像什么、左手大概怎么按、以及我现在可以怎么点着玩或练？',
-                today_plan: '我今天下班比较晚，只有 20 分钟戴耳机练琴时间，请结合我当前的进度和 85 BPM 左右的节奏，帮我拆一个不枯燥、带摇滚或电子律动感的 20 分钟练习清单（热身+技巧+爽感Riff）。',
-                review_quiz: '请看看我刚才在模式 03 认音挑战里的得分和连对数，点评一下我现在的指板熟悉度，并告诉我接下来重点记哪几根弦/哪几个品格最划算？',
-                gear_check: '我现在预算 1500 元以下收二手电吉他，准备用耳机静音练摇滚和电子。请给我出 2 道很短的选择题或情景题，考考我面交验琴时能不能避开坑。'
-            };
-            document.getElementById('ai-user-input').value = prompts[preset] || '';
-            sendAiMessage();
-        }
-
-        async function sendAiMessage() {
-            const input = document.getElementById('ai-user-input');
-            const text = input.value.trim();
-            if (!text) return;
-
+        async function callLlmTeacher(userPrompt, loadingLabel = '老师正在查看你的指板与薄弱点...') {
             const cfg = loadAiConfig();
-            if (!cfg.baseUrl || !cfg.apiKey) {
-                document.getElementById('ai-settings-panel').classList.remove('hidden');
-                appendAiChat('system', '⚠️ 请先在上方填写 Base URL 和 API Key 并点击「保存配置」。');
-                return;
-            }
+            if (!cfg.baseUrl || !cfg.apiKey) return;
 
-            input.value = '';
-            appendAiChat('user', text);
-
-            const sendBtn = document.getElementById('ai-send-btn');
-            sendBtn.disabled = true;
-            sendBtn.textContent = '思考中...';
-
-            const loadingEl = appendAiChat('assistant', '正在结合你当前的指板与练习状态分析...');
-
+            const loadingEl = appendAiChat('assistant', loadingLabel);
             const systemPrompt = [
-                '你是一位专门辅导「36岁成人零基础、下班晚、每日15-30分钟、耳机静音练琴、喜欢摇滚+电子乐+低音律动」的电吉他私教与练习监督员。',
-                '你的说话风格：大白话、鼓励但不吹嘘、极其务实、注重护弦消音和手腕防劳损。',
-                '请结合下面学习者此刻在 CyberFret 网页工具中的实时状态来回答（如果对方在汇报练习或打卡，请给出点评和下一步具体 BPM 目标）：',
+                '你是一位专门辅导「36岁成人零基础、下班晚、每日15-30分钟、耳机静音练琴、喜欢摇滚+电子乐+低音律动」的电吉他老师（不是被动客服，而是主动带练的严厉又温柔的教练）。',
+                '你的说话风格：大白话、短句好懂、直接指出问题所在、极其注重左手防劳损和右手护弦消音。',
+                '请结合下面学习者此刻在 CyberFret 网页工具中的实时状态来回复：',
                 '--- 实时状态 ---',
                 getLivePracticeContext()
             ].join('\n');
 
-            aiHistory.push({ role: 'user', content: text });
+            aiHistory.push({ role: 'user', content: userPrompt });
             const recentHistory = aiHistory.slice(-8);
 
             try {
@@ -1661,13 +2058,448 @@ E|--0--|  (6弦最粗)</pre>
                 const reply = data?.choices?.[0]?.message?.content || '（接口返回为空，请检查模型名是否正确）';
                 aiHistory.push({ role: 'assistant', content: reply });
                 loadingEl.querySelector('div:last-child').textContent = reply;
+                speakText(reply);
             } catch (err) {
                 loadingEl.querySelector('div:last-child').textContent =
-                    `❌ 请求失败：${err.message}\n常见原因：Base URL 末尾路径不对（通常应以 /v1 结尾）、Key 无效、模型名不匹配，或该接口在本地 file:// 打开时受浏览器 CORS 跨域限制（可改用支持 CORS 的中转/本地服务，或用 python -m http.server 启动本地网页）。`;
+                    `❌ 请求失败：${err.message}\n提示：请检查 Base URL（通常以 /v1 结尾）、Key、模型名，或本地服务是否允许 CORS 跨域。`;
+            }
+        }
+
+        async function sendAiMessage() {
+            const input = document.getElementById('ai-user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const cfg = loadAiConfig();
+            if (!cfg.baseUrl || !cfg.apiKey) {
+                document.getElementById('ai-settings-panel').classList.remove('hidden');
+                appendAiChat('system', '⚠️ 请先在上方填写 Base URL 和 API Key 并点击「保存配置」。');
+                return;
+            }
+
+            input.value = '';
+            appendAiChat('user', text);
+
+            const sendBtn = document.getElementById('ai-send-btn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = '思考中...';
+            try {
+                await callLlmTeacher(text);
             } finally {
                 sendBtn.disabled = false;
-                sendBtn.textContent = '发送提问';
+                sendBtn.textContent = '发送';
             }
+        }
+
+        // ==========================================
+        // 11. 不枯燥实战工作台：真琴音高监听 + 鼓贝斯伴奏 + 20分钟带练 + 闷音训练
+        // ==========================================
+        function switchLabTab(tab) {
+            ['tuner', 'backing', 'routine'].forEach(t => {
+                const panel = document.getElementById(`lab-panel-${t}`);
+                const btn = document.getElementById(`lab-tab-${t}`);
+                if (t === tab) {
+                    panel.classList.remove('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-cyber-cyan text-black transition-all';
+                } else {
+                    panel.classList.add('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all';
+                }
+            });
+        }
+
+        // --- A. 真琴实时音高识别 (自相关基频算法，无需外部库) ---
+        let micStream = null;
+        let micAnalyser = null;
+        let micRafId = null;
+        let lastDetectedNoteTs = 0;
+        let lastDetectedNoteName = '';
+
+        async function refreshAudioInputs() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const sel = document.getElementById('audio-input-select');
+                const current = sel.value;
+                const inputs = devices.filter(d => d.kind === 'audioinput');
+                sel.innerHTML = '<option value="">默认音频输入设备</option>' +
+                    inputs.map((d, i) => `<option value="${d.deviceId}">${d.label || '麦克风/声卡 ' + (i + 1)}</option>`).join('');
+                if (current) sel.value = current;
+            } catch (e) {}
+        }
+
+        async function togglePitchDetector() {
+            if (micStream) {
+                stopPitchDetector();
+                return;
+            }
+            const ctx = initAudio();
+            if (ctx.state === 'suspended') await ctx.resume();
+
+            const deviceId = document.getElementById('audio-input-select').value;
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        deviceId: deviceId ? { exact: deviceId } : undefined,
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+                await refreshAudioInputs();
+
+                const source = ctx.createMediaStreamSource(micStream);
+                micAnalyser = ctx.createAnalyser();
+                micAnalyser.fftSize = 2048;
+                source.connect(micAnalyser);
+
+                const btn = document.getElementById('mic-tuner-btn');
+                btn.className = 'px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-all';
+                document.getElementById('mic-tuner-icon').textContent = '⏹';
+                document.getElementById('mic-tuner-text').textContent = '关闭真琴监听';
+                document.getElementById('tuner-status-text').textContent = '监听中：请拨响单根琴弦...';
+
+                const buf = new Float32Array(micAnalyser.fftSize);
+                const loop = () => {
+                    if (!micAnalyser) return;
+                    micAnalyser.getFloatTimeDomainData(buf);
+                    const freq = autoCorrelate(buf, ctx.sampleRate);
+                    if (freq > 65 && freq < 700) {
+                        const midiFloat = 69 + 12 * Math.log2(freq / 440);
+                        const midiRound = Math.round(midiFloat);
+                        const cents = Math.round((midiFloat - midiRound) * 100);
+                        const noteName = NOTES[((midiRound % 12) + 12) % 12];
+                        const octave = Math.floor(midiRound / 12) - 1;
+                        updateTunerUI(noteName, octave, freq, cents);
+                        handleLiveGuitarNote(noteName, cents);
+                    }
+                    micRafId = requestAnimationFrame(loop);
+                };
+                loop();
+            } catch (err) {
+                document.getElementById('tuner-status-text').textContent = `无法打开麦克风/声卡: ${err.message}`;
+            }
+        }
+
+        function stopPitchDetector() {
+            if (micRafId) cancelAnimationFrame(micRafId);
+            micRafId = null;
+            if (micStream) {
+                micStream.getTracks().forEach(t => t.stop());
+                micStream = null;
+            }
+            micAnalyser = null;
+            const btn = document.getElementById('mic-tuner-btn');
+            btn.className = 'px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all';
+            document.getElementById('mic-tuner-icon').textContent = '🎙️';
+            document.getElementById('mic-tuner-text').textContent = '开启真琴监听 (麦克风/声卡)';
+            document.getElementById('tuner-status-text').textContent = '监听已停止';
+        }
+
+        function restartPitchDetectorIfActive() {
+            if (micStream) {
+                stopPitchDetector();
+                togglePitchDetector();
+            }
+        }
+
+        function autoCorrelate(buf, sampleRate) {
+            let rms = 0;
+            for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
+            rms = Math.sqrt(rms / buf.length);
+            if (rms < 0.015) return -1;
+
+            let r1 = 0, r2 = buf.length - 1;
+            const thres = 0.2;
+            for (let i = 0; i < buf.length / 2; i++) {
+                if (Math.abs(buf[i]) < thres) { r1 = i; break; }
+            }
+            for (let i = 1; i < buf.length / 2; i++) {
+                if (Math.abs(buf[buf.length - i]) < thres) { r2 = buf.length - i; break; }
+            }
+            const slice = buf.slice(r1, r2);
+            const size = slice.length;
+            const c = new Array(size).fill(0);
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size - i; j++) {
+                    c[i] += slice[j] * slice[j + i];
+                }
+            }
+            let d = 0;
+            while (d + 1 < size && c[d] > c[d + 1]) d++;
+            let maxval = -1, maxpos = -1;
+            for (let i = d; i < size; i++) {
+                if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
+            }
+            if (maxpos <= 0) return -1;
+            return sampleRate / maxpos;
+        }
+
+        function updateTunerUI(noteName, octave, freq, cents) {
+            document.getElementById('tuner-note-name').textContent = `${noteName}${octave}`;
+            document.getElementById('tuner-freq').textContent = `${freq.toFixed(1)} Hz`;
+            document.getElementById('tuner-cents-label').textContent = `${cents >= 0 ? '+' : ''}${cents}¢`;
+
+            const clamped = Math.max(-50, Math.min(50, cents));
+            const pct = 50 + clamped;
+            const needle = document.getElementById('tuner-needle');
+            needle.style.left = `calc(${pct}% - 5px)`;
+
+            const box = document.getElementById('tuner-note-box');
+            const status = document.getElementById('tuner-status-text');
+            if (Math.abs(cents) <= 10) {
+                box.className = 'w-16 h-16 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 flex flex-col items-center justify-center';
+                needle.className = 'absolute top-0.5 bottom-0.5 w-2.5 rounded-full bg-emerald-400 transition-all duration-75';
+                status.textContent = '✅ 音准极佳！';
+            } else {
+                box.className = 'w-16 h-16 rounded-2xl bg-slate-900 border-2 border-cyber-amber flex flex-col items-center justify-center';
+                needle.className = 'absolute top-0.5 bottom-0.5 w-2.5 rounded-full bg-cyber-amber transition-all duration-75';
+                status.textContent = cents < 0 ? '⬆ 偏低，弦钮稍微拧紧一点' : '⬇ 偏高，弦钮稍微拧松一点';
+            }
+        }
+
+        function handleLiveGuitarNote(noteName, cents) {
+            if (Math.abs(cents) > 25) return;
+            const now = Date.now();
+            if (noteName === lastDetectedNoteName && now - lastDetectedNoteTs < 1200) return;
+            lastDetectedNoteName = noteName;
+            lastDetectedNoteTs = now;
+
+            // 如果正在做老师随堂任务，真琴弹对目标音也能直接通关
+            if (currentTeacherTask && currentTeacherTask.targetNote === noteName) {
+                practiceCombo += 3;
+                updateComboUI();
+                const status = document.getElementById('teacher-task-status');
+                status.textContent = '🎸 真琴弹奏通关!';
+                status.className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono';
+                appendAiChat('assistant', `🎸 网页听到你的真琴弹出了标准的 ${noteName} 音！真琴通关 Combo +3！`);
+                speakText(`太棒了，听到了标准的 ${noteName} 音！`);
+                currentTeacherTask = null;
+            }
+        }
+
+        // --- B. 电子/摇滚鼓+贝斯伴奏引擎 + 变速慢练 ---
+        const BACKING_STYLES = [
+            { name: 'Synthwave 电子脉冲', baseBpm: 105, roots: [45, 41, 43, 40], labels: ['Am / A5', 'F5', 'G5', 'Em / E5'] },
+            { name: '经典朋克摇滚推进', baseBpm: 120, roots: [40, 43, 45, 47], labels: ['E5', 'G5', 'A5', 'B5'] },
+            { name: '工业电子低音 Riff', baseBpm: 100, roots: [40, 40, 43, 42], labels: ['E5', 'E5', 'G5', 'F#5'] },
+            { name: '暗潮后朋克贝斯', baseBpm: 110, roots: [50, 48, 47, 45], labels: ['D5', 'C5', 'B5', 'A5'] }
+        ];
+        let backingStyleIdx = 0;
+        let backingSpeed = 1;
+        let backingTimer = null;
+        let backingStep = 0;
+
+        function selectBackingStyle(idx) {
+            backingStyleIdx = idx;
+            document.querySelectorAll('.bk-style-btn').forEach((btn, i) => {
+                btn.className = i === idx
+                    ? 'bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-cyber-purple text-xs transition-all'
+                    : 'bk-style-btn text-left p-3 rounded-xl bg-cyber-bg border border-slate-700 text-xs transition-all';
+            });
+            updateBackingBpmLabel();
+            if (backingTimer) {
+                toggleBackingTrack();
+                toggleBackingTrack();
+            }
+        }
+
+        function setBackingSpeed(spd) {
+            backingSpeed = spd;
+            document.querySelectorAll('.spd-btn').forEach(b => {
+                b.className = b.id === `spd-${spd}`
+                    ? 'spd-btn px-2 py-1 rounded-md bg-cyber-cyan text-black font-bold'
+                    : 'spd-btn px-2 py-1 rounded-md text-slate-300 hover:text-white';
+            });
+            updateBackingBpmLabel();
+            if (backingTimer) {
+                toggleBackingTrack();
+                toggleBackingTrack();
+            }
+        }
+
+        function updateBackingBpmLabel() {
+            const effective = Math.round(BACKING_STYLES[backingStyleIdx].baseBpm * backingSpeed);
+            document.getElementById('backing-bpm-now').textContent = `${effective} BPM (${Math.round(backingSpeed * 100)}%)`;
+        }
+
+        function playSynthBassNote(midi, dur = 0.25) {
+            const ctx = initAudio();
+            if (ctx.state === 'suspended') ctx.resume();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const filter = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(midiToFreq(midi), now);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(520, now);
+            filter.frequency.exponentialRampToValueAtTime(140, now + dur);
+            gain.gain.setValueAtTime(0.28, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        }
+
+        function toggleBackingTrack() {
+            const btn = document.getElementById('backing-play-btn');
+            const icon = document.getElementById('backing-play-icon');
+            const txt = document.getElementById('backing-play-text');
+            if (backingTimer) {
+                clearInterval(backingTimer);
+                backingTimer = null;
+                icon.textContent = '▶';
+                txt.textContent = '开启鼓+贝斯伴奏';
+                document.getElementById('backing-chord-now').textContent = '当前和弦: --';
+                return;
+            }
+            const style = BACKING_STYLES[backingStyleIdx];
+            const effectiveBpm = style.baseBpm * backingSpeed;
+            const eighthMs = (60 / effectiveBpm) * 1000 / 2;
+            backingStep = 0;
+            icon.textContent = '⏹';
+            txt.textContent = '停止伴奏';
+
+            const tick = () => {
+                const barIdx = Math.floor(backingStep / 8) % style.roots.length;
+                const posInBar = backingStep % 8;
+                const rootMidi = style.roots[barIdx];
+                document.getElementById('backing-chord-now').textContent = `当前和弦: ${style.labels[barIdx]}`;
+
+                // 鼓点：0,4 底鼓；2,6 军鼓；每拍闭镲
+                if (posInBar === 0 || posInBar === 4) playRockDrumBeat(0);
+                else if (posInBar === 2 || posInBar === 6) playRockDrumBeat(1);
+                else playRockDrumBeat(2);
+
+                // 贝斯脉冲（八分音符）
+                playSynthBassNote(rootMidi, (eighthMs / 1000) * 0.85);
+                backingStep = (backingStep + 1) % (style.roots.length * 8);
+            };
+            tick();
+            backingTimer = setInterval(tick, eighthMs);
+        }
+
+        // --- C. 下班 20 分钟倒计时带练 + 每日日志导出 + 闷音节奏训练 ---
+        const ROUTINE_STAGES = [
+            { name: '阶段 1/4: 热身爬格子', sec: 180, tip: '目标：手指放松不酸痛，用每根指头按 6 弦 5-6-7-8 品，保持匀速呼吸。' },
+            { name: '阶段 2/4: 低音弦认音/强力和弦', sec: 300, tip: '目标：用 6 弦和 5 弦切换 E5-G5-A5，注意用左手食指指腹轻轻消掉下面细弦的杂音。' },
+            { name: '阶段 3/4: 闷音与电子律动', sec: 420, tip: '目标：打开「鼓+贝斯伴奏」，用 75% 慢速练右手掌缘轻贴琴桥的闷音（Palm Mute）。' },
+            { name: '阶段 4/4: 自由即兴爽感时刻', sec: 300, tip: '目标：在 Am 五声音阶（5-8品）里随便挑 3 个音，跟着伴奏弹出你喜欢的摇滚小旋律！' }
+        ];
+        let routineIdx = 0;
+        let routineRemain = ROUTINE_STAGES[0].sec;
+        let routineTimer = null;
+
+        function updateRoutineUI() {
+            const st = ROUTINE_STAGES[routineIdx];
+            document.getElementById('routine-stage-badge').textContent = st.name;
+            document.getElementById('routine-stage-tip').textContent = st.tip;
+            const mm = String(Math.floor(routineRemain / 60)).padStart(2, '0');
+            const ss = String(routineRemain % 60).padStart(2, '0');
+            document.getElementById('routine-timer-display').textContent = `${mm}:${ss}`;
+            const pct = Math.round(((st.sec - routineRemain) / st.sec) * 100);
+            document.getElementById('routine-progress-bar').style.width = `${pct}%`;
+        }
+
+        function toggleRoutineTimer() {
+            const btn = document.getElementById('routine-toggle-btn');
+            if (routineTimer) {
+                clearInterval(routineTimer);
+                routineTimer = null;
+                btn.textContent = '▶ 继续带练';
+                return;
+            }
+            btn.textContent = '⏸ 暂停';
+            routineTimer = setInterval(() => {
+                routineRemain -= 1;
+                if (routineRemain <= 0) {
+                    nextRoutineStage();
+                } else {
+                    updateRoutineUI();
+                }
+            }, 1000);
+        }
+
+        function nextRoutineStage() {
+            routineIdx = (routineIdx + 1) % ROUTINE_STAGES.length;
+            routineRemain = ROUTINE_STAGES[routineIdx].sec;
+            updateRoutineUI();
+            speakText(`进入${ROUTINE_STAGES[routineIdx].name}`);
+        }
+
+        function exportPracticeLog() {
+            const today = new Date().toISOString().slice(0, 10);
+            const weaknesses = loadWeaknesses().slice(0, 3).map(w => w.target).join('、') || '无明显卡点';
+            const md = [
+                `## ${today} 电吉他练习记录 (CyberFret 自动生成)`,
+                `- **当前阶段**：${ROUTINE_STAGES[routineIdx].name}`,
+                `- **鼓机/伴奏速度**：${drumBpm} BPM`,
+                `- **认音得分 / Combo**：${quizScore} 分 / ${practiceCombo}x`,
+                `- **今日薄弱点雷达**：${weaknesses}`,
+                `- **明日微目标**：把卡点片段放慢到 75% 速度，连续弹稳 4 小节。`
+            ].join('\n');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(md).then(() => {
+                    appendAiChat('system', '📋 今日 Markdown 练习日志已复制到剪贴板，可直接粘贴到 practice-log/ 里！');
+                });
+            }
+            appendAiChat('assistant', `📝 你的今日练习日志：\n\n${md}`);
+        }
+
+        // 闷音节奏型视觉训练器
+        const RHYTHM_PATTERNS = {
+            chug: ['PM', 'PM', 'PM', 'PM', 'PM', 'PM', 'PM', 'PM'],
+            gallop: ['ACC', 'PM', 'PM', 'ACC', 'PM', 'PM', 'ACC', 'PM'],
+            synth: ['ACC', 'PM', 'PM', 'ACC', 'PM', 'ACC', 'PM', 'PM']
+        };
+        let rhythmTimer = null;
+        let rhythmPos = 0;
+
+        function renderRhythmGrid() {
+            const grid = document.getElementById('rhythm-grid');
+            if (!grid) return;
+            const key = document.getElementById('rhythm-pattern-select').value;
+            const pat = RHYTHM_PATTERNS[key];
+            const labels = ['1', '&', '2', '&', '3', '&', '4', '&'];
+            grid.innerHTML = pat.map((type, idx) => `
+                <div id="rhythm-cell-${idx}" class="rounded-lg p-1.5 text-center border transition-all ${type === 'ACC' ? 'bg-cyber-pink/15 border-cyber-pink/40 text-cyber-pink' : 'bg-slate-900 border-slate-700 text-slate-400'}">
+                    <div class="text-[10px] font-mono">${labels[idx]}</div>
+                    <div class="text-[11px] font-bold">${type}</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleRhythmTrainer() {
+            const btn = document.getElementById('rhythm-play-btn');
+            if (rhythmTimer) {
+                clearInterval(rhythmTimer);
+                rhythmTimer = null;
+                btn.textContent = '▶ 启动视觉节奏训练';
+                renderRhythmGrid();
+                return;
+            }
+            btn.textContent = '⏹ 停止节奏训练';
+            rhythmPos = 0;
+            const eighthMs = (60 / drumBpm) * 1000 / 2;
+            const tick = () => {
+                const key = document.getElementById('rhythm-pattern-select').value;
+                const pat = RHYTHM_PATTERNS[key];
+                pat.forEach((_, i) => {
+                    const cell = document.getElementById(`rhythm-cell-${i}`);
+                    if (!cell) return;
+                    if (i === rhythmPos) cell.classList.add('ring-2', 'ring-cyber-cyan', 'scale-105');
+                    else cell.classList.remove('ring-2', 'ring-cyber-cyan', 'scale-105');
+                });
+                const isAcc = pat[rhythmPos] === 'ACC';
+                playGuitarNote(40, isAcc ? 0.25 : 0.08, 0);
+                rhythmPos = (rhythmPos + 1) % 8;
+            };
+            tick();
+            rhythmTimer = setInterval(tick, eighthMs);
         }
 
         // 初始化页面
@@ -1676,6 +2508,10 @@ E|--0--|  (6弦最粗)</pre>
             buildQuizOptionButtons();
             renderFretboard();
             loadAiConfig();
+            renderWeaknessRadar();
+            updateRoutineUI();
+            renderRhythmGrid();
+            refreshAudioInputs();
         });
     </script>
 </body>
