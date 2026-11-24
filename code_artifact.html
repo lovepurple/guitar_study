@@ -115,10 +115,13 @@
             <div class="flex flex-wrap items-center gap-2 bg-cyber-bg p-1.5 rounded-xl border border-cyber-border">
                 <span class="text-xs text-slate-400 px-2 font-medium">吉他音色:</span>
                 <button id="tone-clean" onclick="setToneMode('clean')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white">
-                    🌊 电子清音 (Clean)
+                    🌊 清音 (Clean)
                 </button>
                 <button id="tone-overdrive" onclick="setToneMode('overdrive')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-cyber-purple to-cyber-pink text-white shadow-md shadow-cyber-purple/30">
-                    🔥 摇滚失真 (Overdrive)
+                    🔥 摇滚失真
+                </button>
+                <button id="tone-synth" onclick="setToneMode('synth')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white">
+                    🎛️ 电子合成
                 </button>
                 <button onclick="initAudioAndTest()" title="测试声音" class="ml-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyber-cyan text-xs font-mono border border-slate-700">
                     🔊 试音
@@ -162,6 +165,49 @@
                 <div class="bg-cyber-bg/80 border border-slate-800 rounded-xl p-3">
                     <div class="font-bold text-cyber-amber mb-1">第 4 步：每天 3 分钟认音</div>
                     <p class="text-slate-300 leading-relaxed">切到「模式 03」，只认<strong>6 弦和 5 弦前 12 品</strong>。这两根粗弦认熟了，摇滚和弦位置你就全通了。</p>
+                </div>
+            </div>
+
+            <!-- 关键手型图解卡片 -->
+            <div class="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <svg viewBox="0 0 80 64" class="w-16 h-14 shrink-0">
+                        <rect x="6" y="38" width="68" height="14" rx="4" fill="#1e293b" stroke="#475569"/>
+                        <line x1="6" y1="42" x2="74" y2="42" stroke="#94a3b8" stroke-width="1.5"/>
+                        <line x1="36" y1="38" x2="36" y2="52" stroke="#cbd5e1" stroke-width="2"/>
+                        <path d="M18 14 Q28 10 31 39" fill="none" stroke="#00f0ff" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="31" cy="41" r="3" fill="#ff2a85"/>
+                        <text x="42" y="24" fill="#94a3b8" font-size="8">贴近品柱</text>
+                    </svg>
+                    <div>
+                        <div class="font-bold text-cyber-cyan">1. 左手指尖立起贴品柱</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">指肚垂直下压，靠近右侧金属品丝（不要压在正中间），省力不打品。</p>
+                    </div>
+                </div>
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <svg viewBox="0 0 80 64" class="w-16 h-14 shrink-0">
+                        <rect x="8" y="34" width="14" height="20" rx="2" fill="#334155" stroke="#64748b"/>
+                        <line x1="18" y1="40" x2="74" y2="40" stroke="#94a3b8" stroke-width="2"/>
+                        <line x1="18" y1="46" x2="74" y2="46" stroke="#64748b" stroke-width="1.5"/>
+                        <ellipse cx="26" cy="34" rx="12" ry="8" fill="#a855f7" fill-opacity="0.35" stroke="#a855f7" stroke-width="1.5"/>
+                        <text x="40" y="22" fill="#e2e8f0" font-size="8">小鱼际轻贴</text>
+                    </svg>
+                    <div>
+                        <div class="font-bold text-cyber-purple">2. 右手琴桥闷音 (Palm Mute)</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">右手掌外侧轻轻搭在琴桥铁座与琴弦交界处，不要太靠前，保留低沉颗粒感。</p>
+                    </div>
+                </div>
+                <div class="bg-cyber-bg/90 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <svg viewBox="0 0 80 64" class="w-16 h-14 shrink-0">
+                        <path d="M34 14 L50 18 L40 44 Z" fill="#f59e0b" fill-opacity="0.85" stroke="#fde68a"/>
+                        <line x1="12" y1="46" x2="68" y2="46" stroke="#94a3b8" stroke-width="2"/>
+                        <text x="12" y="24" fill="#fcd34d" font-size="8">露出 3mm 尖</text>
+                        <text x="48" y="36" fill="#94a3b8" font-size="8">45°斜切</text>
+                    </svg>
+                    <div>
+                        <div class="font-bold text-cyber-amber">3. 拨片握法与 45° 切弦</div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">大拇指压住食指侧面，拨片只露 3mm 小尖；与琴弦呈 45° 斜切拨动最顺滑。</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -452,7 +498,10 @@ E|--0--|  (6弦最粗)</pre>
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 <div class="flex flex-wrap gap-1.5">
                     <button onclick="switchLabTab('tuner')" id="lab-tab-tuner" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyber-cyan text-black transition-all">
-                        🎙️ 真琴监听 & 实时调音
+                        🎙️ 真琴监听 & 音游踩拍
+                    </button>
+                    <button onclick="switchLabTab('riff')" id="lab-tab-riff" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+                        🎸 经典 Riff 闯关库 (TAB)
                     </button>
                     <button onclick="switchLabTab('backing')" id="lab-tab-backing" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
                         🎧 电子/摇滚伴奏 & 变速慢练
@@ -462,6 +511,7 @@ E|--0--|  (6弦最粗)</pre>
                     </button>
                 </div>
                 <div class="flex items-center gap-2 text-xs">
+                    <span id="rhythm-judge-badge" class="hidden px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 font-mono font-bold text-slate-300">踩拍: --</span>
                     <span class="text-slate-400">🔥 练习能量 Combo:</span>
                     <span id="practice-combo-badge" class="px-2.5 py-0.5 rounded-full bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink font-mono font-bold">0 x</span>
                 </div>
@@ -586,10 +636,45 @@ E|--0--|  (6弦最粗)</pre>
                     <div id="rhythm-grid" class="grid grid-cols-8 gap-1.5">
                         <!-- JS 生成 1 & 2 & 3 & 4 & -->
                     </div>
-                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2">
                         <button id="rhythm-play-btn" onclick="toggleRhythmTrainer()" class="px-3 py-1.5 rounded-lg bg-cyber-pink/20 hover:bg-cyber-pink/30 border border-cyber-pink/50 text-cyber-pink text-xs font-bold">▶ 启动视觉节奏训练</button>
                         <span class="text-[11px] text-slate-400">PM = 右手掌缘轻贴琴桥闷音 · ACC = 放开重扫</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: 经典 Riff 闯关库 + 动态滚动六线谱 (TAB Player) -->
+            <div id="lab-panel-riff" class="hidden space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="riff-select" onchange="selectRiff(this.value)" class="bg-cyber-bg border border-slate-700 rounded-xl px-3 py-1.5 text-xs font-bold text-white">
+                            <option value="0">Lv.1 Seven Nation 风格单弦 Bassline (最简单)</option>
+                            <option value="1">Lv.2 Smoke 风格经典双音 Riff (四品跨度)</option>
+                            <option value="2">Lv.3 赛博朋克 E5 闷音推进 (右手律动)</option>
+                            <option value="3">Lv.4 Daft 电子合成八度跳跃 (Octave)</option>
+                            <option value="4">Lv.5 Am 五声音阶摇滚主音句 (Solo入门)</option>
+                            <option value="5">Lv.6 工业摇滚 Drop-Feel 重型 Riff</option>
+                        </select>
+                        <button id="riff-play-btn" onclick="toggleRiffPlayer()" class="px-4 py-1.5 rounded-xl bg-cyber-cyan text-black font-bold text-xs hover:opacity-90">▶ 播放跟弹</button>
+                        <div class="flex items-center gap-1 bg-cyber-bg border border-slate-700 rounded-xl p-0.5 text-[11px]">
+                            <button onclick="setRiffSpeed(0.5)" id="riff-spd-0.5" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white">50%</button>
+                            <button onclick="setRiffSpeed(0.75)" id="riff-spd-0.75" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white">75%</button>
+                            <button onclick="setRiffSpeed(1)" id="riff-spd-1" class="px-2 py-1 rounded-lg bg-cyber-cyan text-black font-bold">100%</button>
+                        </div>
+                        <label class="flex items-center gap-1 text-[11px] text-slate-300 bg-cyber-bg px-2.5 py-1.5 rounded-xl border border-slate-700 cursor-pointer">
+                            <input id="riff-ab-loop" type="checkbox" checked class="accent-cyber-purple">
+                            <span>🔁 A-B 循环前4步</span>
+                        </label>
+                    </div>
+                    <div id="riff-meta-badge" class="text-[11px] text-cyber-amber font-mono">8 步 · 指板联动高亮</div>
+                </div>
+
+                <div id="riff-tab-grid" class="grid grid-cols-8 gap-1.5 bg-cyber-bg border border-slate-800 rounded-xl p-3">
+                    <!-- JS 动态生成滚动 TAB 格子 -->
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+                    <span id="riff-tip-text">💡 提示：只需用一根食指在 5 弦上移动，先跟着光柱弹稳。</span>
+                    <span>配合「🎙️ 真琴监听」弹对当前亮起的音符，直接加 Combo 分！</span>
                 </div>
             </div>
         </section>
@@ -694,6 +779,9 @@ E|--0--|  (6弦最粗)</pre>
                         <button onclick="startTeacherLesson()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyber-purple to-cyber-pink text-white text-xs font-bold shadow-md hover:opacity-90 transition-all">
                             ▶ 让老师开始带练 / 下一关
                         </button>
+                        <button onclick="startWeaknessWarmup()" class="px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/50 text-emerald-300 text-xs font-bold transition-all">
+                            🔥 2分钟错题热身
+                        </button>
                         <button onclick="runTeacherDiagnosis('manual')" class="px-3.5 py-2 rounded-xl bg-cyber-amber/15 hover:bg-cyber-amber/25 border border-cyber-amber/50 text-cyber-amber text-xs font-bold transition-all">
                             🔍 诊断我哪里不会
                         </button>
@@ -721,9 +809,9 @@ E|--0--|  (6弦最粗)</pre>
 
             <!-- 语音 + 补充沟通区（抱着琴时直接语音问老师） -->
             <div class="flex flex-wrap items-center gap-2">
-                <button id="voice-mic-btn" onclick="toggleVoiceInput()" class="px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan font-bold text-xs flex items-center gap-1.5 transition-all shrink-0">
+                <button id="voice-mic-btn" onclick="toggleVoiceInput()" class="px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan font-bold text-xs flex items-center gap-1.5 transition-all shrink-0" title="也可以直接按住键盘 Space 空格键说话，松开自动发送！">
                     <span id="voice-mic-icon">🎤</span>
-                    <span id="voice-mic-text">点击说话问老师</span>
+                    <span id="voice-mic-text">点击或按住空格说话</span>
                 </button>
                 <label class="flex items-center gap-1.5 text-xs text-slate-300 bg-cyber-bg px-2.5 py-2 rounded-xl border border-slate-700 cursor-pointer shrink-0" title="AI老师回复后自动语音念出来，抱着琴不用一直盯屏幕">
                     <input id="ai-tts-toggle" type="checkbox" checked class="accent-cyber-cyan">
@@ -740,6 +828,20 @@ E|--0--|  (6弦最粗)</pre>
         </section>
 
     </main>
+
+    <!-- 类似微信 Ctrl+Win 的按住空格语音悬浮提示条 (Push-to-Talk HUD) -->
+    <div id="voice-hold-hud" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-slate-900/95 backdrop-blur-md border-2 border-cyber-cyan rounded-2xl px-4 py-3 shadow-2xl shadow-cyber-cyan/25 transition-all">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                <span class="text-xs font-bold text-cyber-cyan">🎤 正在语音输入（按住空格说话）</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono">松开发送 · Esc 取消</span>
+        </div>
+        <div id="voice-hold-hud-text" class="text-xs text-white bg-cyber-bg/90 border border-slate-700/80 rounded-xl px-3 py-2 min-h-[36px] max-h-24 overflow-y-auto leading-relaxed">
+            请开始说话，松开空格键后自动发送给 AI 老师...
+        </div>
+    </div>
 
     <footer class="border-t border-cyber-border py-4 text-center text-xs text-slate-500">
         CyberFret 实验室 🎸 每天 15–30 分钟，开启你的电吉他摇滚与电子律动之旅
@@ -938,6 +1040,30 @@ E|--0--|  (6弦最粗)</pre>
                     osc1.connect(shaper);
                     osc2.connect(shaper);
                     shaper.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                } else if (toneMode === 'synth') {
+                    // 电子合成器音色 (Synth)：赛博滤波扫频
+                    osc1.type = 'sawtooth';
+                    osc2.type = 'sawtooth';
+                    osc1.frequency.setValueAtTime(freq, now);
+                    osc2.frequency.setValueAtTime(freq * 0.5, now); // Sub-Octave 低音厚度
+
+                    const subGain = audioCtx.createGain();
+                    subGain.gain.value = 0.45;
+
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(3400, now);
+                    filter.frequency.exponentialRampToValueAtTime(380, now + duration);
+                    filter.Q.value = 5.5;
+
+                    gainNode.gain.setValueAtTime(0.001, now);
+                    gainNode.gain.linearRampToValueAtTime(0.22, now + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    osc1.connect(filter);
+                    osc2.connect(subGain);
+                    subGain.connect(filter);
                     filter.connect(gainNode);
                     gainNode.connect(audioCtx.destination);
                 } else {
@@ -1598,6 +1724,7 @@ E|--0--|  (6弦最粗)</pre>
 
             const intervalMs = (60 / drumBpm) * 1000;
             const tick = () => {
+                recordBeatPulse(intervalMs);
                 playRockDrumBeat(drumBeatIndex);
                 drumBeatIndex = (drumBeatIndex + 1) % 4;
             };
@@ -1663,15 +1790,18 @@ E|--0--|  (6弦最粗)</pre>
 
         function setToneMode(mode) {
             toneMode = mode;
-            const btnClean = document.getElementById('tone-clean');
-            const btnOd = document.getElementById('tone-overdrive');
-            if (mode === 'clean') {
-                btnClean.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-cyber-cyan text-black shadow-md shadow-cyber-cyan/30';
-                btnOd.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white';
-            } else {
-                btnOd.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-cyber-purple to-cyber-pink text-white shadow-md shadow-cyber-purple/30';
-                btnClean.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white';
-            }
+            const map = {
+                clean: 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-cyber-cyan text-black shadow-md shadow-cyber-cyan/30',
+                overdrive: 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-cyber-purple to-cyber-pink text-white shadow-md shadow-cyber-purple/30',
+                synth: 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-emerald-400 text-black shadow-md shadow-emerald-400/30'
+            };
+            ['clean', 'overdrive', 'synth'].forEach(m => {
+                const btn = document.getElementById(`tone-${m}`);
+                if (!btn) return;
+                btn.className = (m === mode)
+                    ? map[m]
+                    : 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:text-white';
+            });
         }
 
         function setLabelMode(mode) {
@@ -1864,22 +1994,45 @@ E|--0--|  (6弦最粗)</pre>
         // ==========================================
         let speechRecognition = null;
         let isListeningVoice = false;
+        let voiceFinalTranscript = '';
+        let voiceInterimTranscript = '';
+        let voiceAutoSendOnEnd = false;
+        let voiceCancelOnEnd = false;
 
-        function toggleVoiceInput() {
+        function updateVoiceHud(text, show = true) {
+            const hud = document.getElementById('voice-hold-hud');
+            const hudText = document.getElementById('voice-hold-hud-text');
+            if (!hud || !hudText) return;
+            if (show) {
+                hud.classList.remove('hidden');
+                hudText.textContent = text || '请开始说话，松开空格键后自动发送给 AI 老师...';
+            } else {
+                hud.classList.add('hidden');
+            }
+        }
+
+        function startVoiceRecognition(autoSendWhenDone = false) {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRec) {
                 appendAiChat('system', '⚠️ 当前浏览器不支持内置语音识别，请使用最新版 Chrome / Edge，或直接打字输入。');
                 return;
             }
-
             if (isListeningVoice && speechRecognition) {
-                speechRecognition.stop();
                 return;
             }
 
+            // 说话前先静音 AI 老师的 TTS 播报，避免麦克风把老师声音录进去
+            stopSpeaking();
+
+            voiceFinalTranscript = '';
+            voiceInterimTranscript = '';
+            voiceAutoSendOnEnd = autoSendWhenDone;
+            voiceCancelOnEnd = false;
+
             speechRecognition = new SpeechRec();
             speechRecognition.lang = 'zh-CN';
-            speechRecognition.interimResults = false;
+            speechRecognition.continuous = true;
+            speechRecognition.interimResults = true;
             speechRecognition.maxAlternatives = 1;
 
             const btn = document.getElementById('voice-mic-btn');
@@ -1890,29 +2043,171 @@ E|--0--|  (6弦最粗)</pre>
                 isListeningVoice = true;
                 btn.className = 'px-3.5 py-2 rounded-xl bg-rose-500/25 border border-rose-500 text-rose-300 font-bold text-xs flex items-center gap-1.5 animate-pulse shrink-0';
                 icon.textContent = '🔴';
-                txt.textContent = '正在听你说话... (点击停止)';
+                txt.textContent = spaceHoldingForVoice ? '正在听你说话... (松开空格发送)' : '正在听你说话... (点击发送)';
+                updateVoiceHud('请开始说话，松开空格键后自动发送给 AI 老师...', true);
             };
 
             speechRecognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                if (transcript) {
-                    document.getElementById('ai-user-input').value = transcript;
-                    sendAiMessage();
+                let finalPart = '';
+                let interimPart = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    const res = event.results[i];
+                    if (res.isFinal) {
+                        finalPart += res[0].transcript;
+                    } else {
+                        interimPart += res[0].transcript;
+                    }
+                }
+                voiceFinalTranscript = finalPart;
+                voiceInterimTranscript = interimPart;
+                const combined = normalizeGuitarSpeech((voiceFinalTranscript + voiceInterimTranscript).trim());
+                if (combined) {
+                    updateVoiceHud(combined, true);
+                    const inputEl = document.getElementById('ai-user-input');
+                    if (inputEl) inputEl.value = combined;
                 }
             };
 
             speechRecognition.onerror = (event) => {
+                if (event.error === 'no-speech' || event.error === 'aborted') return;
                 appendAiChat('system', `🎤 语音识别提示：${event.error}（请确认已允许浏览器使用麦克风）`);
             };
 
             speechRecognition.onend = () => {
                 isListeningVoice = false;
+                updateVoiceHud('', false);
                 btn.className = 'px-3.5 py-2 rounded-xl bg-cyber-cyan/15 hover:bg-cyber-cyan/25 border border-cyber-cyan/50 text-cyber-cyan font-bold text-xs flex items-center gap-1.5 transition-all shrink-0';
                 icon.textContent = '🎤';
-                txt.textContent = '点击说话问老师';
+                txt.textContent = '点击或按住空格说话';
+
+                const rawText = (voiceFinalTranscript + voiceInterimTranscript).trim();
+                const clean = normalizeGuitarSpeech(rawText);
+                const shouldSend = voiceAutoSendOnEnd && !voiceCancelOnEnd;
+
+                voiceAutoSendOnEnd = false;
+                voiceCancelOnEnd = false;
+
+                if (shouldSend) {
+                    const inputEl = document.getElementById('ai-user-input');
+                    if (clean) {
+                        if (inputEl) inputEl.value = clean;
+                        sendAiMessage();
+                    } else {
+                        if (inputEl) inputEl.value = '';
+                        appendAiChat('system', '🎤 松开空格：未检测到有效语音内容，已取消发送。');
+                    }
+                }
             };
 
-            speechRecognition.start();
+            try {
+                speechRecognition.start();
+            } catch (err) {
+                isListeningVoice = false;
+                updateVoiceHud('', false);
+            }
+        }
+
+        function toggleVoiceInput() {
+            if (isListeningVoice && speechRecognition) {
+                voiceAutoSendOnEnd = true;
+                speechRecognition.stop();
+                return;
+            }
+            startVoiceRecognition(true);
+        }
+
+        function normalizeGuitarSpeech(text) {
+            return text
+                .replace(/抛尔靠|帕瓦科德|强力盒弦/gi, 'Power Chord 强力和弦')
+                .replace(/帕姆缪特|门音|闷银/gi, 'Palm Mute 闷音')
+                .replace(/一五和弦|衣五/gi, 'E5')
+                .replace(/平位|品为/gi, '品位')
+                .replace(/六线普/gi, '六线谱 TAB');
+        }
+
+        // 抱着琴免手操作：类似微信 Ctrl+Win，长按 Space 空格键说话，松开自动发送给 AI 老师
+        let spaceHoldingForVoice = false;
+        let spaceHoldTimer = null;
+
+        function isTypingInFormField(el) {
+            if (!el) return false;
+            if (el.isContentEditable) return true;
+            return ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Escape' && isListeningVoice && speechRecognition) {
+                voiceCancelOnEnd = true;
+                spaceHoldingForVoice = false;
+                if (spaceHoldTimer) {
+                    clearTimeout(spaceHoldTimer);
+                    spaceHoldTimer = null;
+                }
+                speechRecognition.stop();
+                appendAiChat('system', '🎤 已取消本次语音输入。');
+                return;
+            }
+
+            if (e.code === 'Space') {
+                if (isTypingInFormField(document.activeElement)) return;
+                e.preventDefault();
+                if (e.repeat || spaceHoldingForVoice) return;
+
+                spaceHoldingForVoice = true;
+                // 长按 180ms 触发语音监听，避免误触空格瞬间弹窗
+                spaceHoldTimer = setTimeout(() => {
+                    spaceHoldTimer = null;
+                    if (spaceHoldingForVoice && !isListeningVoice) {
+                        startVoiceRecognition(true);
+                    }
+                }, 180);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space' && spaceHoldingForVoice) {
+                spaceHoldingForVoice = false;
+                if (spaceHoldTimer) {
+                    clearTimeout(spaceHoldTimer);
+                    spaceHoldTimer = null;
+                }
+                if (isListeningVoice && speechRecognition) {
+                    voiceAutoSendOnEnd = true;
+                    speechRecognition.stop();
+                }
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            if (spaceHoldTimer) {
+                clearTimeout(spaceHoldTimer);
+                spaceHoldTimer = null;
+            }
+            if (spaceHoldingForVoice) {
+                spaceHoldingForVoice = false;
+                if (isListeningVoice && speechRecognition) {
+                    voiceAutoSendOnEnd = true;
+                    speechRecognition.stop();
+                }
+            }
+        });
+
+        async function startWeaknessWarmup() {
+            const list = loadWeaknesses();
+            const top = list[0];
+            let warmupDesc = '2 分钟专属热身：右手 6 弦空弦闷音 (85 BPM) + Am 五声音阶爬格 1 组';
+            if (top) {
+                warmupDesc = `2 分钟错题热身（针对「${top.target}」）：先慢速 75% 弹稳，再跟鼓点连弹 4 遍`;
+            }
+            document.getElementById('teacher-task-desc').textContent = warmupDesc;
+            const st = document.getElementById('teacher-task-status');
+            st.textContent = '🔥 120s 热身中';
+            st.className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono';
+
+            switchLabTab('riff');
+            setRiffSpeed(0.75);
+            appendAiChat('assistant', `🔥 已为你启动【2 分钟错题热身】：${warmupDesc}。跟着下方亮起的格子慢速弹稳！`);
+            speakText(`开始两分钟热身，先把速度放慢到七十五，跟着亮起的格子弹稳。`);
         }
 
         let currentTtsAudio = null;
@@ -2177,9 +2472,10 @@ E|--0--|  (6弦最粗)</pre>
         // 11. 不枯燥实战工作台：真琴音高监听 + 鼓贝斯伴奏 + 20分钟带练 + 闷音训练
         // ==========================================
         function switchLabTab(tab) {
-            ['tuner', 'backing', 'routine'].forEach(t => {
+            ['tuner', 'riff', 'backing', 'routine'].forEach(t => {
                 const panel = document.getElementById(`lab-panel-${t}`);
                 const btn = document.getElementById(`lab-tab-${t}`);
+                if (!panel || !btn) return;
                 if (t === tab) {
                     panel.classList.remove('hidden');
                     btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-cyber-cyan text-black transition-all';
@@ -2245,6 +2541,7 @@ E|--0--|  (6弦最粗)</pre>
                 const loop = () => {
                     if (!micAnalyser) return;
                     micAnalyser.getFloatTimeDomainData(buf);
+                    detectOnsetAndJudgeTiming(buf);
                     const freq = autoCorrelate(buf, ctx.sampleRate);
                     if (freq > 65 && freq < 700) {
                         const midiFloat = 69 + 12 * Math.log2(freq / 440);
@@ -2358,6 +2655,22 @@ E|--0--|  (6弦最粗)</pre>
                 speakText(`太棒了，听到了标准的 ${noteName} 音！`);
                 currentTeacherTask = null;
             }
+
+            // 如果正在跟弹 Riff，匹配当前步骤的目标音名
+            if (riffTimer) {
+                const riff = RIFF_LIBRARY[riffIdx];
+                const step = riff.steps[riffStep];
+                if (step && step.notes && step.notes.length) {
+                    const targetMidi = STRINGS[step.notes[0].s].midi + step.notes[0].f;
+                    const targetNote = NOTES[((targetMidi % 12) + 12) % 12];
+                    if (targetNote === noteName) {
+                        practiceCombo += 2;
+                        updateComboUI();
+                        const cell = document.getElementById(`riff-cell-${riffStep}`);
+                        if (cell) cell.classList.add('border-emerald-400', 'bg-emerald-500/20');
+                    }
+                }
+            }
         }
 
         // --- B. 电子/摇滚鼓+贝斯伴奏引擎 + 变速慢练 ---
@@ -2446,6 +2759,7 @@ E|--0--|  (6弦最粗)</pre>
             txt.textContent = '停止伴奏';
 
             const tick = () => {
+                recordBeatPulse(eighthMs);
                 const barIdx = Math.floor(backingStep / 8) % style.roots.length;
                 const posInBar = backingStep % 8;
                 const rootMidi = style.roots[barIdx];
@@ -2584,6 +2898,262 @@ E|--0--|  (6弦最粗)</pre>
             rhythmTimer = setInterval(tick, eighthMs);
         }
 
+        // ==========================================
+        // 12. 音游级节奏踩拍判定 (Onset Timing Judge)
+        // ==========================================
+        let lastBeatTimeMs = 0;
+        let currentBeatIntervalMs = 700;
+        let prevRmsEnergy = 0;
+        let lastOnsetTs = 0;
+
+        function recordBeatPulse(intervalMs) {
+            lastBeatTimeMs = performance.now();
+            if (intervalMs) currentBeatIntervalMs = intervalMs;
+        }
+
+        function detectOnsetAndJudgeTiming(buf) {
+            if (!drumTimer && !backingTimer && !riffTimer && !rhythmTimer) return;
+            let rms = 0;
+            for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
+            rms = Math.sqrt(rms / buf.length);
+
+            const now = performance.now();
+            const isAttack = (rms > 0.04 && rms > prevRmsEnergy * 2.1 && (now - lastOnsetTs > 180));
+            prevRmsEnergy = prevRmsEnergy * 0.65 + rms * 0.35;
+            if (!isAttack || lastBeatTimeMs === 0) return;
+
+            lastOnsetTs = now;
+            const elapsed = now - lastBeatTimeMs;
+            const interval = Math.max(150, currentBeatIntervalMs);
+            const distToPrev = elapsed;
+            const distToNext = interval - elapsed;
+            const signedOffset = (distToPrev <= distToNext) ? distToPrev : -distToNext;
+            const absErr = Math.abs(signedOffset);
+
+            const badge = document.getElementById('rhythm-judge-badge');
+            if (!badge) return;
+            badge.classList.remove('hidden');
+
+            if (absErr <= 45) {
+                badge.textContent = `踩拍: PERFECT (${Math.round(absErr)}ms)`;
+                badge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-mono font-bold';
+                practiceCombo += 1;
+                updateComboUI();
+            } else if (absErr <= 95) {
+                badge.textContent = `踩拍: GOOD (${signedOffset < 0 ? '略早' : '略晚'})`;
+                badge.className = 'px-2.5 py-0.5 rounded-full bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan font-mono font-bold';
+            } else {
+                badge.textContent = `踩拍: ${signedOffset < 0 ? '偏早 ⏪' : '偏晚 ⏩'} (${Math.round(absErr)}ms)`;
+                badge.className = 'px-2.5 py-0.5 rounded-full bg-cyber-amber/20 border border-cyber-amber text-cyber-amber font-mono font-bold';
+            }
+        }
+
+        // ==========================================
+        // 13. 经典 Riff 闯关库 + 动态滚动六线谱 (TAB Player)
+        // ==========================================
+        const RIFF_LIBRARY = [
+            {
+                name: 'Lv.1 Seven Nation 风格单弦 Bassline',
+                bpm: 112,
+                tip: '💡 只需用一根食指在 5 弦上移动，先跟着光柱弹稳。',
+                steps: [
+                    { label: '5弦7品', notes: [{ s: 4, f: 7 }] },
+                    { label: '5弦7品', notes: [{ s: 4, f: 7 }] },
+                    { label: '5弦10品', notes: [{ s: 4, f: 10 }] },
+                    { label: '5弦7品', notes: [{ s: 4, f: 7 }] },
+                    { label: '5弦5品', notes: [{ s: 4, f: 5 }] },
+                    { label: '5弦3品', notes: [{ s: 4, f: 3 }] },
+                    { label: '5弦2品', notes: [{ s: 4, f: 2 }] },
+                    { label: '休止/延音', notes: [] }
+                ]
+            },
+            {
+                name: 'Lv.2 Smoke 风格经典双音 Riff',
+                bpm: 105,
+                tip: '💡 食指同时轻按 4 弦和 3 弦同一品，弹完记得左手轻抬消音！',
+                steps: [
+                    { label: '0-0', notes: [{ s: 3, f: 0 }, { s: 2, f: 0 }] },
+                    { label: '3-3', notes: [{ s: 3, f: 3 }, { s: 2, f: 3 }] },
+                    { label: '5-5', notes: [{ s: 3, f: 5 }, { s: 2, f: 5 }] },
+                    { label: '0-0', notes: [{ s: 3, f: 0 }, { s: 2, f: 0 }] },
+                    { label: '3-3', notes: [{ s: 3, f: 3 }, { s: 2, f: 3 }] },
+                    { label: '6-6', notes: [{ s: 3, f: 6 }, { s: 2, f: 6 }] },
+                    { label: '5-5', notes: [{ s: 3, f: 5 }, { s: 2, f: 5 }] },
+                    { label: '延音', notes: [] }
+                ]
+            },
+            {
+                name: 'Lv.3 赛博朋克 E5 闷音推进',
+                bpm: 118,
+                tip: '💡 第 1、5 步重扫强力和弦，其余用右手掌缘轻贴琴桥做闷音！',
+                steps: [
+                    { label: 'E5 重音', notes: [{ s: 5, f: 0 }, { s: 4, f: 2 }] },
+                    { label: 'PM 6弦0', notes: [{ s: 5, f: 0 }] },
+                    { label: 'PM 6弦0', notes: [{ s: 5, f: 0 }] },
+                    { label: 'G5 过渡', notes: [{ s: 5, f: 3 }, { s: 4, f: 5 }] },
+                    { label: 'A5 重音', notes: [{ s: 5, f: 5 }, { s: 4, f: 7 }] },
+                    { label: 'PM 6弦5', notes: [{ s: 5, f: 5 }] },
+                    { label: 'B5 上行', notes: [{ s: 5, f: 7 }, { s: 4, f: 9 }] },
+                    { label: 'PM 6弦0', notes: [{ s: 5, f: 0 }] }
+                ]
+            },
+            {
+                name: 'Lv.4 Daft 电子合成八度跳跃',
+                bpm: 116,
+                tip: '💡 建议切到顶部「🎛️ 电子合成」音色！食指按 5 弦、无名指按 3 弦高两品。',
+                steps: [
+                    { label: 'A 八度', notes: [{ s: 4, f: 0 }, { s: 2, f: 2 }] },
+                    { label: 'A 高音', notes: [{ s: 2, f: 2 }] },
+                    { label: 'C 八度', notes: [{ s: 4, f: 3 }, { s: 2, f: 5 }] },
+                    { label: 'C 高音', notes: [{ s: 2, f: 5 }] },
+                    { label: 'D 八度', notes: [{ s: 4, f: 5 }, { s: 2, f: 7 }] },
+                    { label: 'D 高音', notes: [{ s: 2, f: 7 }] },
+                    { label: 'E 八度', notes: [{ s: 4, f: 7 }, { s: 2, f: 9 }] },
+                    { label: 'G 八度', notes: [{ s: 4, f: 10 }, { s: 2, f: 12 }] }
+                ]
+            },
+            {
+                name: 'Lv.5 Am 五声音阶摇滚主音句',
+                bpm: 96,
+                tip: '💡 食指固定守住 5 品，无名指按 7 品、小指按 8 品，练好最经典的摇滚句型！',
+                steps: [
+                    { label: '3弦5品', notes: [{ s: 2, f: 5 }] },
+                    { label: '3弦7品', notes: [{ s: 2, f: 7 }] },
+                    { label: '2弦5品', notes: [{ s: 1, f: 5 }] },
+                    { label: '2弦8品', notes: [{ s: 1, f: 8 }] },
+                    { label: '1弦5品', notes: [{ s: 0, f: 5 }] },
+                    { label: '1弦8品', notes: [{ s: 0, f: 8 }] },
+                    { label: '2弦8品', notes: [{ s: 1, f: 8 }] },
+                    { label: '2弦5品', notes: [{ s: 1, f: 5 }] }
+                ]
+            },
+            {
+                name: 'Lv.6 工业摇滚 Drop-Feel 重型 Riff',
+                bpm: 110,
+                tip: '💡 低音弦快速交替，下拨要果断干净，配合左侧电子鼓更有现场感！',
+                steps: [
+                    { label: 'E5 强力', notes: [{ s: 5, f: 0 }, { s: 4, f: 2 }] },
+                    { label: '6弦3品', notes: [{ s: 5, f: 3 }] },
+                    { label: '6弦5品', notes: [{ s: 5, f: 5 }] },
+                    { label: 'E5 强力', notes: [{ s: 5, f: 0 }, { s: 4, f: 2 }] },
+                    { label: '6弦6品', notes: [{ s: 5, f: 6 }] },
+                    { label: '6弦5品', notes: [{ s: 5, f: 5 }] },
+                    { label: '6弦3品', notes: [{ s: 5, f: 3 }] },
+                    { label: '6弦0品', notes: [{ s: 5, f: 0 }] }
+                ]
+            }
+        ];
+        let riffIdx = 0;
+        let riffSpeed = 1;
+        let riffTimer = null;
+        let riffStep = 0;
+
+        function renderRiffTab() {
+            const grid = document.getElementById('riff-tab-grid');
+            if (!grid) return;
+            const riff = RIFF_LIBRARY[riffIdx];
+            const abLoop = document.getElementById('riff-ab-loop')?.checked;
+            document.getElementById('riff-tip-text').textContent = riff.tip;
+            document.getElementById('riff-meta-badge').textContent = `${Math.round(riff.bpm * riffSpeed)} BPM · ${abLoop ? 'A-B 前4步循环' : '8 步完整循环'}`;
+
+            grid.innerHTML = riff.steps.map((st, idx) => {
+                const isInAb = !abLoop || idx < 4;
+                const tabStr = st.notes.length
+                    ? st.notes.map(n => `${n.s + 1}弦${n.f}`).join('+')
+                    : '—';
+                return `
+                    <div id="riff-cell-${idx}" onclick="previewRiffStep(${idx})" class="cursor-pointer rounded-xl p-2 text-center border transition-all ${isInAb ? 'bg-slate-900 border-slate-700 hover:border-cyber-cyan' : 'bg-slate-950/50 border-slate-800/50 opacity-45'}">
+                        <div class="text-[10px] font-mono text-slate-500">第${idx + 1}拍</div>
+                        <div class="text-xs font-mono font-extrabold text-cyber-cyan mt-0.5">${tabStr}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${st.label}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function clearRiffFretHighlights() {
+            document.querySelectorAll('[id^="badge-"].riff-active-dot').forEach(d => {
+                d.classList.remove('riff-active-dot', 'ring-4', 'ring-white', 'scale-125', 'bg-cyber-amber', 'text-black');
+            });
+        }
+
+        function previewRiffStep(idx) {
+            const step = RIFF_LIBRARY[riffIdx].steps[idx];
+            if (!step) return;
+            clearRiffFretHighlights();
+            step.notes.forEach((n, i) => {
+                const strObj = STRINGS[n.s];
+                if (!strObj) return;
+                playGuitarNote(strObj.midi + n.f, 0.7, i * 0.02);
+                animateString(strObj.stringNum);
+                const badge = document.getElementById(`badge-${strObj.stringNum}-${n.f}`);
+                if (badge) {
+                    badge.classList.add('riff-active-dot', 'ring-4', 'ring-white', 'scale-125', 'bg-cyber-amber', 'text-black');
+                }
+            });
+        }
+
+        function selectRiff(idx) {
+            riffIdx = parseInt(idx, 10) || 0;
+            riffStep = 0;
+            renderRiffTab();
+            if (riffTimer) {
+                toggleRiffPlayer();
+                toggleRiffPlayer();
+            }
+        }
+
+        function setRiffSpeed(spd) {
+            riffSpeed = spd;
+            ['0.5', '0.75', '1'].forEach(s => {
+                const btn = document.getElementById(`riff-spd-${s}`);
+                if (!btn) return;
+                btn.className = (parseFloat(s) === spd)
+                    ? 'px-2 py-1 rounded-lg bg-cyber-cyan text-black font-bold'
+                    : 'px-2 py-1 rounded-lg text-slate-400 hover:text-white';
+            });
+            renderRiffTab();
+            if (riffTimer) {
+                toggleRiffPlayer();
+                toggleRiffPlayer();
+            }
+        }
+
+        function toggleRiffPlayer() {
+            const btn = document.getElementById('riff-play-btn');
+            if (riffTimer) {
+                clearInterval(riffTimer);
+                riffTimer = null;
+                btn.textContent = '▶ 播放跟弹';
+                clearRiffFretHighlights();
+                renderRiffTab();
+                return;
+            }
+            const riff = RIFF_LIBRARY[riffIdx];
+            const stepMs = (60 / (riff.bpm * riffSpeed)) * 1000 / 2;
+            btn.textContent = '⏹ 停止跟弹';
+            riffStep = 0;
+
+            const tick = () => {
+                recordBeatPulse(stepMs);
+                const abLoop = document.getElementById('riff-ab-loop')?.checked;
+                const maxSteps = abLoop ? 4 : riff.steps.length;
+                if (riffStep >= maxSteps) riffStep = 0;
+
+                riff.steps.forEach((_, i) => {
+                    const cell = document.getElementById(`riff-cell-${i}`);
+                    if (!cell) return;
+                    if (i === riffStep) cell.classList.add('ring-2', 'ring-cyber-cyan', 'scale-105', 'bg-cyber-cyan/15');
+                    else cell.classList.remove('ring-2', 'ring-cyber-cyan', 'scale-105', 'bg-cyber-cyan/15');
+                });
+
+                previewRiffStep(riffStep);
+                riffStep = (riffStep + 1) % maxSteps;
+            };
+            tick();
+            riffTimer = setInterval(tick, stepMs);
+        }
+
         // 初始化页面
         window.addEventListener('DOMContentLoaded', () => {
             buildFretboardSkeleton();
@@ -2593,6 +3163,7 @@ E|--0--|  (6弦最粗)</pre>
             renderWeaknessRadar();
             updateRoutineUI();
             renderRhythmGrid();
+            renderRiffTab();
             refreshAudioInputs();
         });
     </script>
